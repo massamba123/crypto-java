@@ -1,0 +1,13 @@
+package com.farhan.staradmin.repository;
+
+import com.farhan.staradmin.entity.Key;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface KeyRepository extends JpaRepository<Key,Integer> {
+    List<Key> findByAlgorithmeId(int algorithmeId);
+
+}
