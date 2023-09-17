@@ -7,12 +7,13 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 public class AsymetriqueKeyGen {
-    public static void genKey(String algorithme,int taille,String path) throws Exception{
+    public static KeyPair genKey(String algorithme,int taille) throws Exception{
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(algorithme);
         kpg.initialize(taille);
         KeyPair keyPair = kpg.generateKeyPair();
-        saveKey(keyPair.getPublic(),path+"pubProf.txt");
-        saveKey(keyPair.getPrivate(),path+"privProf.txt");
+//        saveKey(keyPair.getPublic(),path+"pubProf.txt");
+//        saveKey(keyPair.getPrivate(),path+"privProf.txt");
+        return keyPair;
     }
     public static void saveKey(Key key,String filename) throws Exception{
         FileOutputStream fos = new FileOutputStream(filename);

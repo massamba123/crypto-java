@@ -10,6 +10,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,9 +21,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.crypto.SecretKey;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.KeyPair;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Controller
 @RequestMapping(value = "pages")
@@ -38,6 +45,7 @@ public class AlgorithmeController {
         ModelMap modelMap = new ModelMap();
         modelMap.addAttribute("algorithme", new Algorithme()); // 'user' is the attribute name
         Key key = new Key();
+        System.out.println("size = "+keys.size());
         modelMap.addAttribute("key",key);
         modelMap.addAttribute("keys",keys);
         modelMap.addAttribute("algorithmes", algorithmes); // 'user' is the attribute name
@@ -56,29 +64,75 @@ public class AlgorithmeController {
         // Redirect to a success page or back to the list of algorithms
         return "redirect:/pages/algorithme"; // Redirect to your algorithm list page
     }
+    private void addToZip(ZipOutputStream zipOut, String fileName, byte[] content) throws IOException {
+        zipOut.putNextEntry(new ZipEntry(fileName));
+        zipOut.write(content, 0, content.length);
+        zipOut.closeEntry();
+    }
     @PostMapping("/generate-key")
     public ResponseEntity<Resource> generateKey(@ModelAttribute("key") Key key, BindingResult bindingResult, Model model) throws Exception {
+        String type = algorithmeService.getTypeAlgo(key.getName()).getType();
+        key.setType(type);
+        if (type.equals("symetrique")) {
+            return generateSymmetricKeyResponse(key);
+        } else if (key.getType().equals("asymetrique")) {
+            return generateAsymmetricKeyResponse(key);
+        }
 
-        // Save the algorithm using your service
-        SecretKey secretKey = keyService.saveKey(key);
-        // Vérifier si le fichier existe et est lisible
-            // Déterminer le type MIME du fichier à partir de son extension (vous pouvez ajuster cette logique)
-            String contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
-
-            // Renvoyer le fichier en tant que réponse HTTP
-            String filaName = "secret-key-"+key.getName() + "-"+key.getSize()+".key";
-            ByteArrayResource resource = new ByteArrayResource(secretKey.getEncoded());
-
-            // Set the headers for the response
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+filaName);
-
-            // Build the ResponseEntity with the ByteArrayResource and headers
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .contentLength(secretKey.getEncoded().length)
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(resource);
-        // Redirect to a success page or back to the list of algorithms
+        // Gérer d'autres types si nécessaire
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
+
+    private ResponseEntity<Resource> generateSymmetricKeyResponse(Key key) throws Exception {
+        SecretKey secretKey = keyService.saveKey(key);
+
+        if (secretKey == null) {
+            return redirectToAlgorithmPage();
+        } else {
+            String fileName = key.getPath() + ".key";
+            ByteArrayResource resource = new ByteArrayResource(secretKey.getEncoded());
+            return buildFileResponse(fileName, resource);
+        }
+    }
+
+    private ResponseEntity<Resource> generateAsymmetricKeyResponse(Key key) throws Exception {
+        KeyPair kp = keyService.saveAsymetrique(key);
+
+        if (kp == null) {
+            return redirectToAlgorithmPage();
+        } else {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try (ZipOutputStream zipOut = new ZipOutputStream(baos)) {
+                addToZip(zipOut, key.getPath() + ".pub", kp.getPublic().getEncoded());
+                addToZip(zipOut, key.getPath() + ".priv", kp.getPrivate().getEncoded());
+            } catch (IOException e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+
+            String fileName = "key_pub_priv.zip";
+            ByteArrayResource resource = new ByteArrayResource(baos.toByteArray());
+            return buildFileResponse(fileName, resource);
+        }
+    }
+
+    private ResponseEntity<Resource> redirectToAlgorithmPage() {
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .header(HttpHeaders.LOCATION, "/pages/algorithme")
+                .build();
+    }
+
+    private ResponseEntity<Resource> buildFileResponse(String fileName, ByteArrayResource resource) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentLength(resource.contentLength());
+        headers.setContentDispositionFormData("attachment", fileName);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(resource.contentLength())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
+    }
+
 }

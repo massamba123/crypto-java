@@ -11,17 +11,12 @@
     <div>
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Chiffrement symetrique</h4>
+                <h4 class="card-title">Chiffrement et Dechiffrement</h4>
                 <form th:object="${chiffrement}" th:action="@{save-symetrique}" method="post" class="form-sample" enctype="multipart/form-data">
-                <div class="form-group row">
-                    <label for="type">Sélectionner le type d'algorithme:</label>
-                    <select id="type" name="type" class="form-control" th:field="*{type}">
-                        <option th:each="algoType : ${chiffrement.getTypes()}" th:value="${algoType}" th:text="${algoType}"></option>
-                    </select>
-                </div>
                     <div class="form-group row">
                         <label for="algorithm">Sélectionner un algorithme:</label>
                         <select id="algorithm" name="algorithm" class="form-control" th:field="*{algorithme}">
+                            <option th:each="algo : ${algorithmes}" th:value="${algo.name}"  th:text="${algo.type + ' ' + algo.name}"></option>
                         </select>
                     </div>
                     <div class="form-group row">
@@ -41,41 +36,28 @@
                             <button type="button" id="genererCle" class="btn btn-success mr-2">Generer une de chiffrement</button>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <label class="col-form-label" for="key">Cle de chiffrement disponible dans la base de donne</label>
+                    <div class="form-group row" id="getkey" style="display: none;">
+                        <label class="col-form-label" id="label" for="key">Cle de chiffrement disponible dans la base de donne</label>
                         <select class="form-control form-control-lg" id="key" th:field="*{keyPath}">
                         </select>
                     </div>
                     <script th:inline="javascript">
                         /*<![CDATA[*/
                         // Get references to the select elements
-                        const typeSelect = document.getElementById('type');
                         const algorithmSelect = document.getElementById('algorithm');
                         const size = document.getElementById('taille');
+                        const label = document.getElementById('label');
                         const keySelect = document.getElementById('key');
+                        const getkeySelect = document.getElementById('getkey');
                         const keygenSelect = document.getElementById('genererCle');
                         // Define algorithm options based on your data
                         const algorithmOptions = {
                             "symetrique": ["AES", "DES"],
-                            "asymetrique": ["RSA", "DSA"],
+                            "asymetrique": ["RSA", "ECDSA"],
                             "partage cle": ["Diffie-Hellman"]
                         }; // Replace this with your actual data
 
                         // Function to update the algorithm dropdown based on the selected type
-                        function updateAlgorithmOptions() {
-                            const selectedType = typeSelect.value;
-                            algorithmSelect.innerHTML = ''; // Clear the current options
-
-                            if (algorithmOptions[selectedType]) {
-                                console.log(selectedType);
-                                algorithmOptions[selectedType].forEach(name => {
-                                    const option = document.createElement('option');
-                                    option.value = name;
-                                    option.textContent = name;
-                                    algorithmSelect.appendChild(option);
-                                });
-                            }
-                        }
                         function updateSizeOptions() {
                             const selectedAlgo = algorithmSelect.value;
                             size.innerHTML = ''; // Clear the current options
@@ -92,7 +74,6 @@
                             }
                         }
                         function generateKey(){
-                            const selectedType =typeSelect.value;
                             const enteredName = algorithmSelect.value;
                             const selectedSize = size.value;
                             fetch('gen-key', {
@@ -103,7 +84,6 @@
                                 // Vous pouvez ajouter des données à envoyer dans le corps de la requête ici
                                 body: JSON.stringify({
                                     // Exemple de données à envoyer si nécessaire
-                                    type: selectedType,
                                     algorithme: enteredName,
                                     size: selectedSize
                                 })
@@ -117,7 +97,6 @@
                                     a.style.display = 'none';
                                     a.href = blobUrl;
                                     a.download = 'secretkey-' + enteredName+"-"+selectedSize+".key"; // Remplacez par le nom de votre fichier avec l'extension appropriée
-
                                     // Ajoutez le lien au DOM
                                     document.body.appendChild(a);
 
@@ -133,7 +112,6 @@
                                 });
                         }
                         function getKeys(){
-                            const selectedType =typeSelect.value;
                             const enteredName = algorithmSelect.value;
                             const selectedSize = size.value;
                             fetch('getkeys', {
@@ -144,7 +122,6 @@
                                 // Vous pouvez ajouter des données à envoyer dans le corps de la requête ici
                                 body: JSON.stringify({
                                     // Exemple de données à envoyer si nécessaire
-                                    type: selectedType,
                                     algorithme: enteredName,
                                     size: selectedSize
                                 })
@@ -152,20 +129,24 @@
                                 .then(response => response.json())
                                 .then(data => {
                                     // Traitez la réponse ici (data) si votre contrôleur renvoie des données
-                                    data.forEach(key => {
-                                        const option = document.createElement('option');
-                                        option.value = key.path;
-                                        option.textContent = "cle " + key.name + " de " + key.size + " bits";
-                                        keySelect.appendChild(option);
-                                    });
+                                    if (data){
+                                        data.forEach(key => {
+                                            const option = document.createElement('option');
+                                            option.value = key.path;
+                                            option.textContent = "cle " + key.name + " de " + key.size + " bits";
+                                            keySelect.appendChild(option);
+                                        });
+                                    }
+
                                     // Vous pouvez faire ce que vous voulez avec les données renvoyées par le contrôleur
                                 })
                                 .catch(error => {
-                                    console.error('Erreur lors de la requête AJAX :', error);
+                                    keySelect.hidden = true;
+                                    label.innerHTML = "aucune cle trouve";
+                                    label.style.color = 'red';
                                 });
                         }
                         // Add an event listener to the type dropdown to update the algorithm dropdown
-                        typeSelect.addEventListener('change', updateAlgorithmOptions);
                         algorithmSelect.addEventListener('change',updateSizeOptions);
                         keygenSelect.addEventListener('click',generateKey)
                         size.addEventListener('change',getKeys);
@@ -174,16 +155,14 @@
                         });
                         document.getElementById('genererCleButton').addEventListener('click', function() {
                             // Effectuez une requête AJAX vers l'URL de votre contrôleur
+                            console.log(keySelect.style.display);
+                            getkeySelect.style.display = 'block';
                             getKeys();
-                        });
-                        typeSelect.addEventListener('change', function () {
-                            keySelect.innerHTML = "";
                         });
                         algorithmSelect.addEventListener('input', function () {
                             keySelect.innerHTML = "";
                         });
                         // Initial population of the algorithm dropdown
-                        updateAlgorithmOptions();
                         updateSizeOptions();
                         /*]]>*/
                     </script>
@@ -195,16 +174,49 @@
                     </select>
                 </div>
 
-                <div class="form-group row">
-                    <label>Fichier</label>
-                    <div class="input-group col-xs-12">
-                        <div>
-                            <input type="file" id="file" style="display: none;" name="file">
-                            <label for="file" class="btn btn-success mr-2">Choisir un fichier</label>
-                        </div>
+                    <div class="form-group row">
+                        <label for="messageOrFile">Choisir entre un message ou un fichier :</label>
+                        <select id="messageOrFile" class="form-control">
+                            <option value="message">Message</option>
+                            <option value="file">Fichier</option>
+                        </select>
                     </div>
 
-                </div>
+                    <div id="messageInput" class="form-group row">
+                        <label for="message">Message :</label>
+                        <input type="textarea" id="message" class="form-control">
+                    </div>
+                    <div id="fileInput" class="form-group row" style="display: none;">
+                        <input type="file" id="file" name="file" style="display: none;">
+                        <label for="file" class="btn btn-success mr-2" id="chooseFileButton">Choisir un fichier</label>
+                    </div>
+                    <script>
+                        // Récupérez les éléments du formulaire
+                        const messageOrFileSelect = document.getElementById('messageOrFile');
+                        const messageInput = document.getElementById('messageInput');
+                        const fileInput = document.getElementById('fileInput');
+
+                        // Ajoutez un gestionnaire d'événement pour le changement de l'option
+                        messageOrFileSelect.addEventListener('change', function () {
+                            if (messageOrFileSelect.value === 'message') {
+                                messageInput.style.display = 'block';
+                                fileInput.style.display = 'none';
+                            } else if (messageOrFileSelect.value === 'file') {
+                                messageInput.style.display = 'none';
+                                fileInput.style.display = 'block';
+                            }
+                        });
+
+                        // Assurez-vous d'initialiser l'affichage en fonction de la valeur initiale de l'option
+                        if (messageOrFileSelect.value === 'message') {
+                            messageInput.style.display = 'block';
+                            fileInput.style.display = 'none';
+                        } else if (messageOrFileSelect.value === 'file') {
+                            messageInput.style.display = 'none';
+                            fileInput.style.display = 'block';
+                        }
+
+                    </script>
                     <div hidden="true" id="divbtn" class="form-group row">
                         <button  type="submit" id="chiffrer" class="btn btn-success mr-2">
                             <p id="p"></p>

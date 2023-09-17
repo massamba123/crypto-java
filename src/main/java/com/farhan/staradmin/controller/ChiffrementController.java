@@ -1,9 +1,11 @@
 package com.farhan.staradmin.controller;
 
 import com.farhan.staradmin.crypto.symetrique.SecretKeyImpl;
+import com.farhan.staradmin.entity.Algorithme;
 import com.farhan.staradmin.entity.Chiffrement;
 import com.farhan.staradmin.entity.Key;
 import com.farhan.staradmin.entity.User;
+import com.farhan.staradmin.service.AlgorithmeService;
 import com.farhan.staradmin.service.ChiffrementService;
 import com.farhan.staradmin.service.ChiffrementUtil;
 import com.farhan.staradmin.service.KeyService;
@@ -19,6 +21,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import utils.KeyLoader;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -32,23 +35,28 @@ public class ChiffrementController {
     @Autowired
     private ChiffrementUtil chiffrementUtil;
     @Autowired
+    private AlgorithmeService algorithmeService;
+    @Autowired
     private ChiffrementService chiffrementService;
     @Autowired
     private KeyService keyService;
     @GetMapping("symetrique")
     public ModelMap mmSymetrique() {
         ModelMap modelMap = new ModelMap();
+        List<Algorithme> algorithmes = algorithmeService.getAllAlgorithmes();
         Chiffrement chiffrement = new Chiffrement();
+
         modelMap.addAttribute("chiffrement", chiffrement); // 'user' is the attribute name
+        modelMap.addAttribute("algorithmes", algorithmes); // 'user' is the attribute name
         return modelMap;
     }
     @PostMapping("getkeys")
     @ResponseBody // Cette annotation indique que le résultat doit être converti en JSON
     public List<Key> genererCle(@RequestBody Map<String, String> params) {
         // Traitez les données reçues depuis la requête AJAX
-        String type = params.get("type");
         String algorithme = params.get("algorithme");
         int size = Integer.parseInt(params.get("size"));
+        String type = algorithmeService.getTypeAlgo(algorithme).getType();
         List<Key> keys = chiffrementUtil.getKeysByAttribut(type, algorithme, size);
         // Exécutez la logique de génération de clé ou tout autre traitement nécessaire
 
@@ -98,11 +106,37 @@ public class ChiffrementController {
                                                 Model model) throws Exception {
 
         byte[] out = new byte[0];
-        if (!file.isEmpty() && !key.isEmpty()) {
+        if (!file.isEmpty() && (!key.isEmpty() || chiffrement.getKeyPath() != null)) {
             // Process the uploaded file here
+            java.security.Key sk = null;
+            Algorithme algorithm =  algorithmeService.getTypeAlgo(chiffrement.getAlgorithme());
+            String type =algorithm.getType();
+            String provider = algorithm.getProvider();
+            chiffrement.setType(type);
             String fileName = file.getOriginalFilename();
             byte[] fileBytes = file.getBytes();
-            SecretKey sk = SecretKeyImpl.getKeyFromBytes(key.getBytes(), chiffrement.getAlgorithme());
+            if (!key.isEmpty()){
+                if (chiffrement.getMode().equals("Chiffrement")){
+                    if (type.equals("symetrique")){
+                        sk = SecretKeyImpl.getKeyFromBytes(key.getBytes(), chiffrement.getAlgorithme());
+                    }
+                    else if (type.equals("asymetrique")){
+                        sk = KeyLoader.deserializePublicKey(key.getBytes(), chiffrement.getAlgorithme());
+                    }
+                }
+                else if (chiffrement.getMode().equals("Dechiffrement")){
+                    if (type.equals("symetrique")){
+                        sk = SecretKeyImpl.getKeyFromBytes(key.getBytes(), chiffrement.getAlgorithme());
+                    }
+                    else if (type.equals("asymetrique")){
+                        sk = KeyLoader.deserializePrivateKey(key.getBytes(), chiffrement.getAlgorithme());
+                    }
+                }
+            }
+            if (chiffrement.getKeyPath() != null) {
+                sk = SecretKeyImpl.getKey(chiffrement.getKeyPath());
+            }
+
             out  = chiffrementService.createChiffrement(chiffrement,fileBytes,fileName,sk);
             // Save the file or perform any necessary operations
             // For example, you can save the file to a specific location on your server

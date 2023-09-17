@@ -4,6 +4,8 @@ import javax.persistence.*;
 import java.security.Provider;
 import java.security.Security;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -12,18 +14,42 @@ public class Algorithme {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(unique = true,nullable = false)
     private String name;
     @Column(nullable = true)
     private String provider = "BC";
     @Column(nullable = true)
     private String padding = "BCPadding";
+    private String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public Algorithme(String name) {
         this.name = name;
     }
 
     public Algorithme() {
     }
-    public List<String> getProviders() {
+    public List<String> getTypes(){
+        return Arrays.asList("symetrique","asymetrique","partage cle");
+    }
+    public  List<String> getAlgoTypes(){
+        switch (this.getType()) {
+            case "symetrique":
+                return Arrays.asList("AES", "DES");
+            case "asymetrique":
+                return Arrays.asList("RSA", "ECDSA");
+            case "partage cle":
+                return Collections.singletonList("Diffie-Hellman");
+        }
+        return null;
+    }    public List<String> getProviders() {
         List<String> providerList = new ArrayList<>();
 
         // Obtenir la liste de tous les fournisseurs de sécurité installés

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>Home</title>
+</head>
+<body>
+<section layout:fragment="content">
+
+    <div class="row">
+        <div class="col-md-6 d-flex align-items-stretch grid-margin">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Hachage de message</h4>
+                    <form class="forms-sample">
+                        <div class="form-group row">
+                            <label for="algorithm">Sélectionner un algorithme de hachage</label>
+                            <select id="algorithm" name="algorithm" class="form-control">
+                                <option value="" selected>Choisiser un algorithme</option>
+                                <option th:each="algo : ${algos}" th:value="${algo}"  th:text="${algo}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group row" id="divsize" style="display: none">
+                            <label for="size">Taille</label>
+                            <select id="size" name="size" class="form-control">
+                            </select>
+                        </div>
+                        <script>
+                            alogoSelect = document.getElementById("algorithm");
+                            sizeSelect= document.getElementById("size");
+                            const algorithmsWithKeyOptions = new Map();
+                            algorithmsWithKeyOptions.set("SHA-1", [160]);
+                            algorithmsWithKeyOptions.set("SHA-256", [256]);
+                            algorithmsWithKeyOptions.set("SHA-384", [384]);
+                            algorithmsWithKeyOptions.set("SHA-512", [512]);
+                            algorithmsWithKeyOptions.set("SHA-3-256", [256]);
+                            algorithmsWithKeyOptions.set("MD5", [128]);
+                            algorithmsWithKeyOptions.set("Whirlpool", [512]);
+                            algorithmsWithKeyOptions.set("GOST R 34.11-94", [256]);
+                            function getSize() {
+                                const selectedAlgo = alogoSelect.value;
+                                sizeSelect.innerHTML = ''; // Clear the current options
+                                if (algorithmsWithKeyOptions.get(selectedAlgo)) {
+                                    algorithmsWithKeyOptions.get(selectedAlgo).forEach(sizeValue => {
+                                        const option = document.createElement('option');
+                                        option.value = sizeValue;
+                                        option.textContent = sizeValue;
+                                        sizeSelect.appendChild(option);
+                                    });
+                                    document.getElementById("divsize").style.display = 'block';
+                                }
+                            }
+                            alogoSelect.addEventListener('change',function () {
+                                getSize();
+                            })
+                            getSize();
+                        </script>
+                        <div class="form-group row">
+                            <label for="message">Message</label>
+                            <textarea class="form-control" id="message" rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success mr-2">Calculer l'empreinte</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Verification de hache</h4>
+                    <p class="card-description">
+                        Horizontal form layout
+                    </p>
+                    <form class="forms-sample">
+                        <div class="form-group row">
+                            <label for="algorithm1">Sélectionner un algorithme de hachage</label>
+                            <select id="algorithm1" name="algorithm1" class="form-control">
+                                <option value="" selected>Choisiser un algorithme</option>
+                                <option th:each="algo : ${algos}" th:value="${algo}"  th:text="${algo}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group row" id="divsize1" style="display: none">
+                            <label for="size1">Taille</label>
+                            <select id="size1" name="size1" class="form-control">
+                            </select>
+                        </div>
+                        <script>
+                            alogoSelect1 = document.getElementById("algorithm1");
+                            sizeSelect1 = document.getElementById("size1");
+                            const algorithmsWithKeyOptions1 = new Map();
+                            algorithmsWithKeyOptions1.set("SHA-1", [160]);
+                            algorithmsWithKeyOptions1.set("SHA-256", [256]);
+                            algorithmsWithKeyOptions1.set("SHA-384", [384]);
+                            algorithmsWithKeyOptions1.set("SHA-512", [512]);
+                            algorithmsWithKeyOptions1.set("SHA-3-256", [256]);
+                            algorithmsWithKeyOptions1.set("MD5", [128]);
+                            algorithmsWithKeyOptions1.set("Whirlpool", [512]);
+                            algorithmsWithKeyOptions1.set("GOST R 34.11-94", [256]);
+                            function getSize1() {
+                                const selectedAlgo1 = alogoSelect1.value;
+                                sizeSelect1.innerHTML = ''; // Clear the current options
+                                if (algorithmsWithKeyOptions1.get(selectedAlgo1)) {
+                                    algorithmsWithKeyOptions1.get(selectedAlgo1).forEach(sizeValue => {
+                                        const option = document.createElement('option');
+                                        option.value = sizeValue;
+                                        option.textContent = sizeValue;
+                                        sizeSelect1.appendChild(option);
+                                    });
+                                    document.getElementById("divsize1").style.display = 'block';
+                                }
+                            }
+                            alogoSelect1.addEventListener('change',function () {
+                                getSize1();
+                            })
+                            getSize1();
+                        </script>
+
+                        <div class="form-group row">
+                            <label for="message1">Message</label>
+                            <textarea class="form-control" id="message1" rows="2"></textarea>
+                        </div>
+                        <div class="form-group row">
+                            <label for="empreinte">Empreinte</label>
+                            <textarea class="form-control" id="empreinte" rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success mr-2">Verifier</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</section>
+</body>
+</html>

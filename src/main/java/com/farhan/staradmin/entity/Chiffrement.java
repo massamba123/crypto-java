@@ -22,6 +22,17 @@ public class Chiffrement {
     private String keyPath;
     private String fileInPath;
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    @Column(nullable = true)
+    private String message;
+
 
     public List<String> getTypes(){
         return Arrays.asList("symetrique","asymetrique","partage cle");
@@ -45,19 +56,23 @@ public class Chiffrement {
 
         // AES key sizes
         types.put("AES", Arrays.asList(128, 192, 256));
-
-        // DES key sizes
         types.put("DES", Collections.singletonList(56));
+        types.put("DESede", Arrays.asList(112, 168)); // Separate values with commas
+        types.put("Blowfish", Arrays.asList(32, 448)); // Separate values with commas
+        types.put("IDEA", Collections.singletonList(128));
+        types.put("Camellia", Arrays.asList(128, 192, 256));
+        types.put("SEED", Collections.singletonList(128));
+        types.put("Serpent", Arrays.asList(128, 192, 256));
+        types.put("RC4", Arrays.asList(40, 128, 256, 2048)); // Separate values with commas
+        types.put("ChaCha20", Collections.singletonList(256));
 
-        // RSA key sizes
+        // Algorithmes de chiffrement asymétrique
         types.put("RSA", Arrays.asList(1024, 2048, 3072, 4096));
+        types.put("ECDSA", Arrays.asList(256, 384,521)); // Adjust as needed
+        types.put("ElGamal", Arrays.asList(1024, 2048, 3072, 4096));
 
-        // Diffie-Hellman key sizes
-        types.put("Diffie-Hellman", Arrays.asList(1024, 2048, 3072, 4096));
 
         // DSA key sizes
-        types.put("DSA", Arrays.asList(1024, 2048, 3072, 4096)); // Adjust as needed
-
         return types;
     }
     public int getId() {

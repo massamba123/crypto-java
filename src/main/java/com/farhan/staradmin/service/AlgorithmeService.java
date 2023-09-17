@@ -23,6 +23,10 @@ public class AlgorithmeService {
         }
         return algorithmeRepository.findAll();
     }
+    public Algorithme getTypeAlgo(String algo){
+        Algorithme algorithme = algorithmeRepository.findByName(algo);
+        return algorithme;
+    }
 
     public Algorithme getAlgorithmeById(int id) {
         return algorithmeRepository.findById(id).orElse(null);

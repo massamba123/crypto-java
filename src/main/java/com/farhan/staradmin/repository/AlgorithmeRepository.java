@@ -9,4 +9,5 @@ import java.util.List;
 
 @Repository
 public interface AlgorithmeRepository extends JpaRepository<Algorithme,Integer> {
+    Algorithme findByName(String name);
 }

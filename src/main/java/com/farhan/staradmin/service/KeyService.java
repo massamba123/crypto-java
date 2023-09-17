@@ -14,6 +14,9 @@ import javax.crypto.SecretKey;
 import javax.persistence.Table;
 import java.io.File;
 import java.io.IOException;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.List;
 import java.util.Random;
 
@@ -46,16 +49,38 @@ public class KeyService {
 //        String fullPath = "/src/main/resources/keys/";
         SecretKey keyscrete = null;
         String path = directoryKeys;
-        if (key.getType().equals("symetrique")){
-            path += "symetrique/" + "secret-key-"+key.getName() + "-"+key.getSize()+".key";
-             keyscrete = SecretKeyImpl.genKey(key.getName(),key.getSize());
+        if (!key.isSave()){
+            keyscrete = SecretKeyImpl.genKey(key.getName(),key.getSize());
+            return keyscrete;
+        } else {
+            path += "symetrique/" + key.getPath() +".key";
+            keyscrete = SecretKeyImpl.genKey(key.getName(),key.getSize());
             SecretKeyImpl.saveKey(keyscrete,path);
-        } else if (key.getType().equals("asymetrique")) {
-             path  += "asymetrique/" + "key-" + key.getId() + ".sk";
-            AsymetriqueKeyGen.genKey(key.getName(),key.getSize(),path);
+            key.setPath(path);
+            keyRepository.save(key);
+            return null;
         }
-        key.setPath(path);
-        return keyscrete;
+    }
+    public KeyPair saveAsymetrique(Key key) throws Exception{
+        String name = key.getPath();
+        String directoryKeys = "src/main/resources/keys/asymetrique/";
+        // Obtenez le chemin complet du répertoire "resources"
+//        File directoryFile = resource.getFile();
+//        String fullPath = "/src/main/resources/keys/";
+        SecretKey keyscrete = null;
+        String path = directoryKeys;
+        KeyPair kp = AsymetriqueKeyGen.genKey(key.getName(),key.getSize());
+        if (!key.isSave()){
+            return kp;
+        } else {
+            PublicKey publicKey = kp.getPublic();
+            PrivateKey privateKey = kp.getPrivate();
+            AsymetriqueKeyGen.saveKey(publicKey,path+key.getPath()+".pub");
+            AsymetriqueKeyGen.saveKey(privateKey,path+key.getPath()+".priv");
+            key.setPath(path+name);
+            keyRepository.save(key);
+            return null;
+        }
     }
 
     public void deleteKey(int id) {

@@ -35,11 +35,42 @@
                     <form th:object="${algorithme}" th:action="@{save-algorithm}" method="post" class="form-sample">
                         <div>
                             <div class="form-group row">
-                                <label class="col-sm-3 col-form-label" for="name">Nom algorithme</label>
-                                <div class="col-sm-9">
-                                    <input type="text" id="name" name="name" class="form-control" th:field="*{name}" />
-                                </div>
+                                <label for="type">Sélectionner le type d'algorithme:</label>
+                                <select id="type" name="type" class="form-control" th:field="*{type}">
+                                    <option th:each="algoType : ${algorithme.getTypes()}" th:value="${algoType}" th:text="${algoType}"></option>
+                                </select>
                             </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label" for="name">Nom algorithme</label>
+                                <select id="name" class="form-control form-control-lg" th:field="*{name}">
+                                    <!-- Add more options as needed getProviders -->
+                                </select>
+                            </div>
+                            <script>
+                                const algorithmSelect = document.getElementById("name");
+                                const typeSelect = document.getElementById("type");
+
+                                const algorithmOptions = {
+                                    'symetrique': ["AES", "DES", "DESede", "Blowfish", "IDEA", "Camellia", "SEED", "Serpent", "RC4", "ChaCha20"],
+                                    'asymetrique': ["RSA", "ElGamal"],
+                                    'Hashing': ["SHA-1", "SHA-256", "SHA-384", "SHA-512", "SHA-3-256", "MD5", "Whirlpool", "GOST R 34.11-94"]
+                                };
+                                function updateAlgorithmOptions() {
+                                    const selectedType = typeSelect.value;
+                                    algorithmSelect.innerHTML = ''; // Clear the current options
+
+                                    if (algorithmOptions[selectedType]) {
+                                        algorithmOptions[selectedType].forEach(name => {
+                                            const option = document.createElement('option');
+                                            option.value = name;
+                                            option.textContent = name;
+                                            algorithmSelect.appendChild(option);
+                                        });
+                                    }
+                                }
+                                typeSelect.addEventListener('change', updateAlgorithmOptions);
+                                updateAlgorithmOptions();
+                            </script>
                             <div class="form-group row">
                                 <label class="col-sm-3 col-form-label" for="provider">Provider</label>
                                 <div class="col-sm-9">
@@ -74,52 +105,44 @@
                     <form th:object="${key}" th:action="@{generate-key}" method="post" class="form-sample">
                         <div>
                             <div class="form-group row">
-                                <label for="type">Sélectionner le type d'algorithme:</label>
-                                <select id="type" name="type" class="form-control" th:field="*{type}">
-                                    <option th:each="algoType : ${key.getTypes()}" th:value="${algoType}" th:text="${algoType}"></option>
-                                </select>
-                            </div>
-                            <div class="form-group row">
                                 <label for="algorithm">Sélectionner un algorithme:</label>
                                 <select id="algorithm" name="algorithm" class="form-control" th:field="*{name}">
+                                    <option value="" selected>Choisiser un algorithme</option>
+                                    <option th:each="algo : ${algorithmes}" th:value="${algo.name}"  th:text="${algo.type + ' ' + algo.name}"></option>
                                 </select>
                             </div>
                             <div class="form-group row">
                                 <label class="col-sm-3 col-form-label" for="taille">Taille</label>
                                 <select class="form-control form-control-lg" id="taille" th:field="*{size}">
-
+                                    <option value="0" selected>Choisiser la taille de la cle a generer</option>
                                 </select>
                             </div>
+                            <div class="form-check form-check-flat row">
+                                <label class="form-check-label" for="saveKey">Voulez-vous sauvegarder la clé ?</label>
+                                <input type="checkbox" id="saveKey" th:field="*{save}" class="form-check-input">
+                            </div>
+
+                            <div class="form-group row" id="fileNameGroup" style="display: none;">
+                                <label class="col-sm-3 col-form-label" for="fileName">Nom du fichier :</label>
+                                <input type="text" id="fileName" th:field="*{path}" class="form-control">
+                            </div> <div class="form-group row">
+                            <!-- Contenu à afficher si 'Option 2' est sélectionnée -->
+                            <button type="submit" id="btn" class="btn btn-success mr-2"></button>
+                        </div>
                             <script th:inline="javascript">
                                 /*<![CDATA[*/
                                 // Get references to the select elements
-                                const typeSelect = document.getElementById('type');
-                                const algorithmSelect = document.getElementById('algorithm');
+                                const algorithmSelecte = document.getElementById('algorithm');
                                 const size = document.getElementById('taille');
-
+                                const saveKeyCheckbox = document.getElementById('saveKey');
+                                const fileNameGroup = document.getElementById('fileNameGroup');
+                                const fileNameInput = document.getElementById('fileName');
+                                btnSelect = document.getElementById('btn');
                                 // Define algorithm options based on your data
-                                const algorithmOptions = {
-                                    "symetrique": ["AES", "DES"],
-                                    "asymetrique": ["RSA", "DSA"],
-                                    "partage cle": ["Diffie-Hellman"]
-                                }; // Replace this with your actual data
-
                                 // Function to update the algorithm dropdown based on the selected type
-                                function updateAlgorithmOptions() {
-                                    const selectedType = typeSelect.value;
-                                   algorithmSelect.innerHTML = ''; // Clear the current options
-
-                                    if (algorithmOptions[selectedType]) {
-                                        algorithmOptions[selectedType].forEach(name => {
-                                            const option = document.createElement('option');
-                                            option.value = name;
-                                            option.textContent = name;
-                                            algorithmSelect.appendChild(option);
-                                        });
-                                    }
-                                }
                                 function updateSizeOptions() {
-                                    const selectedAlgo = algorithmSelect.value;
+                                    const selectedAlgo = algorithmSelecte.value;
+                                    console.log("sleec algo ="+selectedAlgo);
                                     size.innerHTML = ''; // Clear the current options
 
                                     const allSizeAlgorithm = /*[[ ${key.getAllSizeAlgorithm()} ]]*/; // Remove the extra *
@@ -133,21 +156,25 @@
                                         });
                                     }
                                 }
-
+                                function toggleFileNameInput() {
+                                    if (saveKeyCheckbox.checked) {
+                                        fileNameGroup.style.display = 'block';
+                                        btn.innerHTML = "Enregistrer la cle";
+                                    } else {
+                                        fileNameGroup.style.display = 'none';
+                                        btn.innerHTML = "Telecharger la cle";
+                                    }
+                                }
 
                                     // Add an event listener to the type dropdown to update the algorithm dropdown
-                                typeSelect.addEventListener('change', updateAlgorithmOptions);
-                                algorithmSelect.addEventListener('change',updateSizeOptions);
+                                algorithmSelecte.addEventListener('change',updateSizeOptions);
+                                saveKeyCheckbox.addEventListener('change', toggleFileNameInput);
                                 // Initial population of the algorithm dropdown
-                                updateAlgorithmOptions();
                                 updateSizeOptions();
+                                // Initial state of the file name input
+                                toggleFileNameInput();
                                 /*]]>*/
                             </script>
-
-                            <div class="form-group row">
-                                <!-- Contenu à afficher si 'Option 2' est sélectionnée -->
-                                <button type="submit" class="btn btn-success mr-2">Enregistrer la cle</button>
-                            </div>
                         </div>
                     </form>
                 </div>
