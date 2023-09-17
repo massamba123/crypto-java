@@ -1,19 +1,28 @@
 package com.farhan.staradmin.entity;
 
+import com.farhan.staradmin.service.ChiffrementUtil;
+import com.farhan.staradmin.service.KeyService;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.persistence.*;
-import java.lang.reflect.Array;
+import java.io.File;
 import java.util.*;
 
 @Entity
-@Table(name = "key_option")
-public class Key {
+public class Chiffrement {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    @Column(name = "name")
-    private String name;
     private String type;
+    private String algorithme;
+    private int size;
+    @Column(nullable = false)
+    private String mode;
+    private String keyPath;
+    private String fileInPath;
+
+
     public List<String> getTypes(){
         return Arrays.asList("symetrique","asymetrique","partage cle");
     }
@@ -27,6 +36,9 @@ public class Key {
                 return Collections.singletonList("Diffie-Hellman");
         }
         return null;
+    }
+    public List<String> getListeModeChiffrement(){
+        return Arrays.asList("Chiffrement","Dechiffrement");
     }
     public Map<String, List<Integer>> getAllSizeAlgorithm() {
         Map<String, List<Integer>> types = new HashMap<>();
@@ -48,6 +60,13 @@ public class Key {
 
         return types;
     }
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getType() {
         return type;
@@ -57,34 +76,12 @@ public class Key {
         this.type = type;
     }
 
-    @Column(name = "path")
-    private String path;
-
-    @Column(name = "size")
-    private int size;
-
-    public int getId() {
-        return id;
+    public String getAlgorithme() {
+        return algorithme;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
+    public void setAlgorithme(String algorithme) {
+        this.algorithme = algorithme;
     }
 
     public int getSize() {
@@ -93,5 +90,29 @@ public class Key {
 
     public void setSize(int size) {
         this.size = size;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
+
+    public String getKeyPath() {
+        return keyPath;
+    }
+
+    public void setKeyPath(String keyPath) {
+        this.keyPath = keyPath;
+    }
+
+    public String getFileInPath() {
+        return fileInPath;
+    }
+
+    public void setFileInPath(String fileInPath) {
+        this.fileInPath = fileInPath;
     }
 }

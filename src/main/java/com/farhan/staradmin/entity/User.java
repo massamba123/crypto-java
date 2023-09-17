@@ -14,18 +14,27 @@ public class User {
     private String password;
     private String roles;
     private String permissions;
+    private String selectedOption;
 
-    public User(String first_name, String last_name, String username, String password, String roles, String permissions) {
+
+    public User(String first_name, String last_name, String username, String password, String roles) {
         this.first_name = first_name;
         this.last_name = last_name;
         this.username = username;
         this.password = password;
         this.roles = roles;
-        this.permissions = permissions;
     }
 
     public User() {
 
+    }
+
+    public String getSelectedOption() {
+        return selectedOption;
+    }
+
+    public void setSelectedOption(String selectedOption) {
+        this.selectedOption = selectedOption;
     }
 
     public int getId() {

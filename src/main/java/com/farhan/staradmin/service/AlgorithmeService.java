@@ -18,6 +18,9 @@ public class AlgorithmeService {
     }
 
     public List<Algorithme> getAllAlgorithmes() {
+        if (algorithmeRepository.findAll().isEmpty()){
+            return  null;
+        }
         return algorithmeRepository.findAll();
     }
 

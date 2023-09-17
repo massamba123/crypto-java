@@ -10,6 +10,27 @@
     <link rel="stylesheet" th:href="@{/vendors/css/vendor.bundle.addons.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="shortcut icon" th:href="@{/images/favicon.png}" />
+    <style>
+        /* Increase the font size for specific elements */
+        .card-title {
+            font-size: 24px; /* Adjust the size as needed */
+        }
+
+        .card-description {
+            font-size: 18px; /* Adjust the size as needed */
+        }
+
+        /* Increase the font size for form labels */
+        .col-form-label {
+            font-size: 16px; /* Adjust the size as needed */
+        }
+
+        /* Increase the font size for form controls */
+        .form-control {
+            font-size: 16px; /* Adjust the size as needed */
+        }
+    </style>
+
 </head>
 
 <body>
@@ -93,13 +114,13 @@
                     <div class="collapse" id="ui-basic">
                         <ul class="nav flex-column sub-menu">
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Configuration</a>
+                                <a class="nav-link" th:href="@{algorithme}">Configuration</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Symetrique</a>
+                                <a class="nav-link" th:href="@{symetrique}">Symetrique</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Asymetrique</a>
+                                <a class="nav-link" th:href="@{asymetrique}">Asymetrique</a>
                             </li>
                         </ul>
                     </div>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>Home</title>
+    <style>
+        /* Increase the font size for specific elements */
+        .card-title {
+            font-size: 24px; /* Adjust the size as needed */
+        }
+
+        .card-description {
+            font-size: 18px; /* Adjust the size as needed */
+        }
+
+        /* Increase the font size for form labels */
+        .col-form-label {
+            font-size: 16px; /* Adjust the size as needed */
+        }
+
+        /* Increase the font size for form controls */
+        .form-control {
+            font-size: 16px; /* Adjust the size as needed */
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+
+    <div class="row">
+        <div class="col-6 grid-margin h-100">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Ajouter un algorithme</h4>
+                    <form th:object="${algorithme}" th:action="@{save-algorithm}" method="post" class="form-sample">
+                        <div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label" for="name">Nom algorithme</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="name" name="name" class="form-control" th:field="*{name}" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label" for="provider">Provider</label>
+                                <div class="col-sm-9">
+                                    <select id="provider" name="provider" class="form-control form-control-lg" th:field="*{provider}">
+                                        <option th:each="name : ${algorithme.getProviders()}" th:value="${name}" th:text="${name}"></option>
+                                        <!-- Add more options as needed getProviders -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label" for="padding">Padding</label>
+                                <div class="col-sm-9">
+                                    <select id="padding" name="padding" class="form-control form-control-lg" th:field="*{padding}">
+                                        <option th:each="name : ${algorithme.getProviders()}" th:value="${name}" th:text="${name}"></option>
+                                        <!-- Add more options as needed -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <button type="submit" class="btn btn-success mr-2">Ajouter l'algorithme</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-6 grid-margin h-100">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Cle</h4>
+                    <form th:object="${key}" th:action="@{generate-key}" method="post" class="form-sample">
+                        <div>
+                            <div class="form-group row">
+                                <label for="type">Sélectionner le type d'algorithme:</label>
+                                <select id="type" name="type" class="form-control" th:field="*{type}">
+                                    <option th:each="algoType : ${key.getTypes()}" th:value="${algoType}" th:text="${algoType}"></option>
+                                </select>
+                            </div>
+                            <div class="form-group row">
+                                <label for="algorithm">Sélectionner un algorithme:</label>
+                                <select id="algorithm" name="algorithm" class="form-control" th:field="*{name}">
+                                </select>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label" for="taille">Taille</label>
+                                <select class="form-control form-control-lg" id="taille" th:field="*{size}">
+
+                                </select>
+                            </div>
+                            <script th:inline="javascript">
+                                /*<![CDATA[*/
+                                // Get references to the select elements
+                                const typeSelect = document.getElementById('type');
+                                const algorithmSelect = document.getElementById('algorithm');
+                                const size = document.getElementById('taille');
+
+                                // Define algorithm options based on your data
+                                const algorithmOptions = {
+                                    "symetrique": ["AES", "DES"],
+                                    "asymetrique": ["RSA", "DSA"],
+                                    "partage cle": ["Diffie-Hellman"]
+                                }; // Replace this with your actual data
+
+                                // Function to update the algorithm dropdown based on the selected type
+                                function updateAlgorithmOptions() {
+                                    const selectedType = typeSelect.value;
+                                   algorithmSelect.innerHTML = ''; // Clear the current options
+
+                                    if (algorithmOptions[selectedType]) {
+                                        algorithmOptions[selectedType].forEach(name => {
+                                            const option = document.createElement('option');
+                                            option.value = name;
+                                            option.textContent = name;
+                                            algorithmSelect.appendChild(option);
+                                        });
+                                    }
+                                }
+                                function updateSizeOptions() {
+                                    const selectedAlgo = algorithmSelect.value;
+                                    size.innerHTML = ''; // Clear the current options
+
+                                    const allSizeAlgorithm = /*[[ ${key.getAllSizeAlgorithm()} ]]*/; // Remove the extra *
+                                    console.log(allSizeAlgorithm);
+                                    if (allSizeAlgorithm[selectedAlgo]) {
+                                        allSizeAlgorithm[selectedAlgo].forEach(sizeValue => {
+                                            const option = document.createElement('option');
+                                            option.value = sizeValue;
+                                            option.textContent = sizeValue;
+                                            size.appendChild(option);
+                                        });
+                                    }
+                                }
+
+
+                                    // Add an event listener to the type dropdown to update the algorithm dropdown
+                                typeSelect.addEventListener('change', updateAlgorithmOptions);
+                                algorithmSelect.addEventListener('change',updateSizeOptions);
+                                // Initial population of the algorithm dropdown
+                                updateAlgorithmOptions();
+                                updateSizeOptions();
+                                /*]]>*/
+                            </script>
+
+                            <div class="form-group row">
+                                <!-- Contenu à afficher si 'Option 2' est sélectionnée -->
+                                <button type="submit" class="btn btn-success mr-2">Enregistrer la cle</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Collapsible Header -->
+                    <a data-toggle="collapse" href="#algorithmTable" aria-expanded="false">
+                        <h4 class="card-title">Liste des algorithmes disponible</h4>
+                    </a>
+                    <div class="table-responsive collapse" id="algorithmTable">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Provider</th>
+                                <th>Padding</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- Loop through your algorithm data here -->
+                            <th:block th:each="algorithm, algorithmIndex : ${algorithmes}">
+                                <tr>
+                                    <td th:text="${algorithmIndex.index + 1}"></td>
+                                    <td th:text="${algorithm.name}"></td>
+                                    <td th:text="${algorithm.provider}"></td>
+                                    <td th:text="${algorithm.padding}"></td>
+                                    <td>
+                                        <!-- Add action buttons or links as needed -->
+                                        <button class="btn btn-info">Edit</button>
+                                        <button class="btn btn-danger">Delete</button>
+                                    </td>
+                                </tr>
+                            </th:block>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Collapsible Header -->
+                    <a data-toggle="collapse" href="#keyTable" aria-expanded="false">
+                        <h4 class="card-title">Liste des cles sauvegardes</h4>
+                    </a>
+                    <div class="table-responsive collapse" id="keyTable">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>nom algorithme</th>
+                                <th>type</th>
+                                <th>taille</th>
+                                <th>Chemin</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- Loop through your algorithm data here -->
+                            <th:block th:each="key, keyIndex : ${keys}">
+                                <tr>
+                                    <td th:text="${keyIndex.index + 1}"></td>
+                                    <td th:text="${key.name}"></td>
+                                    <td th:text="${key.type}"></td>
+                                    <td th:text="${key.size}"></td>
+                                    <td th:text="${key.path}"></td>
+                                    <td>
+                                        <!-- Add action buttons or links as needed -->
+                                        <button class="btn btn-info">Edit</button>
+                                        <button class="btn btn-danger">Delete</button>
+                                    </td>
+                                </tr>
+                            </th:block>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</section>
+</body>
+</html>

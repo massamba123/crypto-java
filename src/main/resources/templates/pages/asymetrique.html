@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>Home</title>
+</head>
+<body>
+<section layout:fragment="content">
+
+    <div>
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Chiffrement asymetrique</h4>
+                <div class="form-group row">
+                    <label class="col-form-label" for="algo">Algorithme</label>
+                    <select class="form-control form-control-lg" id="algo">
+                        <option>AES</option>
+                        <option>DES</option>
+                        <option>RSA</option>
+                        <option>ELGammal</option>
+                        <option>DH</option>
+                    </select>
+                </div>
+                <div class="form-group row">
+                    <label class="col-form-label" for="taille">Taille</label>
+                    <select class="form-control form-control-lg" id="taille">
+                        <option>56</option>
+                        <option>128</option>
+                        <option>192</option>
+                        <option>256</option>
+                    </select>
+                </div>
+                <div class="form-group row">
+                    <label>File upload</label>
+                    <input type="file" name="img[]" class="file-upload-default">
+                    <div class="input-group col-xs-12">
+                        <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image">
+                        <span class="input-group-append">
+                          <button class="file-upload-browse btn btn-info" type="button">Upload</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</section>
+</body>
+</html>

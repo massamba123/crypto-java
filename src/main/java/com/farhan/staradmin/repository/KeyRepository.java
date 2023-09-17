@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface KeyRepository extends JpaRepository<Key,Integer> {
-    List<Key> findByAlgorithmeId(int algorithmeId);
-
+    public List<Key> findByTypeAndNameAndSize(String type,String name,int size);
 }
