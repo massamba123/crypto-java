@@ -155,7 +155,6 @@
                         });
                         document.getElementById('genererCleButton').addEventListener('click', function() {
                             // Effectuez une requête AJAX vers l'URL de votre contrôleur
-                            console.log(keySelect.style.display);
                             getkeySelect.style.display = 'block';
                             getKeys();
                         });
@@ -186,7 +185,7 @@
                         <label for="message">Message :</label>
                         <input type="textarea" id="message" class="form-control">
                     </div>
-                    <div id="fileInput" class="form-group row" style="display: none;">
+                    <div id="fileInput3" class="form-group row" style="display: none;">
                         <input type="file" id="file" name="file" style="display: none;">
                         <label for="file" class="btn btn-success mr-2" id="chooseFileButton">Choisir un fichier</label>
                     </div>
@@ -217,7 +216,7 @@
                         }
 
                     </script>
-                    <div hidden="true" id="divbtn" class="form-group row">
+                    <div id="divbtn" class="form-group row">
                         <button  type="submit" id="chiffrer" class="btn btn-success mr-2">
                             <p id="p"></p>
                         </button>
@@ -226,23 +225,20 @@
                         mode = document.getElementById("mode");
                         div = document.getElementById("divbtn");
                         p = document.getElementById("p");
-                        const fileInput = document.getElementById('file');
+                        const fileInput1 = document.getElementById('file');
 
                         // Function to handle file selection
-                        fileInput.addEventListener('change', function () {
-                            const selectedFile = fileInput.files[0];
-                            if (selectedFile) {
+                        fileInput1.addEventListener('change', function () {
+                            const selectedFile1 = fileInput1.files[0];
+                            if (selectedFile1) {
                                 // You can access the selected file using selectedFile variable
-                                console.log('Selected file:', selectedFile);
+                                console.log('Selected file:', selectedFile1);
                             }
                         });
                       function createBtn() {
                           btn = document.getElementById("chiffrer");
-                          btn.innerHTML = "";
                           if (mode.value){
                               p.textContent = mode.value;
-                              btn.appendChild(p);
-                              div.hidden = false;
                           }
                       }
                       mode.addEventListener('change',createBtn);

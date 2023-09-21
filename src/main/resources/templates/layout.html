@@ -106,25 +106,31 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+                    <a class="nav-link" th:href="@{symetrique}">
                         <i class="menu-icon mdi mdi-content-copy"></i>
                         <span class="menu-title">Chiffrement</span>
-                        <i class="menu-arrow"></i>
                     </a>
-                    <div class="collapse" id="ui-basic">
-                        <ul class="nav flex-column sub-menu">
-                            <li class="nav-item">
-                                <a class="nav-link" th:href="@{algorithme}">Configuration</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" th:href="@{symetrique}">Symetrique</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" th:href="@{asymetrique}">Asymetrique</a>
-                            </li>
-                        </ul>
-                    </div>
                 </li>
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">-->
+<!--                        <i class="menu-icon mdi mdi-content-copy"></i>-->
+<!--                        <span class="menu-title">Chiffrement</span>-->
+<!--                        <i class="menu-arrow"></i>-->
+<!--                    </a>-->
+<!--                    <div class="collapse" id="ui-basic">-->
+<!--                        <ul class="nav flex-column sub-menu">-->
+<!--                            <li class="nav-item">-->
+<!--                                <a class="nav-link" th:href="@{algorithme}">Configuration</a>-->
+<!--                            </li>-->
+<!--                            <li class="nav-item">-->
+<!--                                <a class="nav-link" th:href="@{symetrique}">Symetrique</a>-->
+<!--                            </li>-->
+<!--                            <li class="nav-item">-->
+<!--                                <a class="nav-link" th:href="@{asymetrique}">Asymetrique</a>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                    </div>-->
+<!--                </li>-->
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{hachage}">
                         <i class="menu-icon mdi mdi-backup-restore"></i>
@@ -152,7 +158,7 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{table-elements}">
+                    <a class="nav-link" th:href="@{algorithme}">
                         <i class="menu-icon mdi mdi-table"></i>
                         <span class="menu-title">Configuration des clés</span>
                     </a>
