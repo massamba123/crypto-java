@@ -11,12 +11,19 @@
         <div class="col-md-6 d-flex align-items-stretch grid-margin">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Hachage de message</h4>
+                    <h4 class="card-title">Signature de message</h4>
                     <form id="hashForm" class="forms-sample">
+                        <div class="form-group row">
+                            <label for="algorithmV2">Sélectionner un algorithme de asymetrique</label>
+                            <select id="algorithmV2" name="algorithm12" class="form-control">
+                                <option value="" selected>Choisiser un algorithme</option>
+                                <option th:each="algo : ${algos}" th:value="${algo}"  th:text="${algo}"></option>
+                            </select>
+                        </div>
                         <div class="form-group row">
                             <label for="algorithms">Sélectionner un algorithme de hachage</label>
                             <select id="algorithms" name="algorithms" class="form-control">
-                                <option value="" selected>Choisiser un algorithme</option>
+                                <option value="" selected>Choisiser un algorithme de hachage</option>
                                 <option th:each="algo : ${algos}" th:value="${algo}"  th:text="${algo}"></option>
                             </select>
                         </div>
@@ -187,15 +194,19 @@
         <div class="col-md-6 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Verification de hache</h4>
-                    <p class="card-description">
-                        Horizontal form layout
-                    </p>
+                    <h4 class="card-title">Verification de signature</h4>
                     <form class="forms-sample">
+                        <div class="form-group row">
+                            <label for="algorithmV1">Sélectionner un algorithme de asymetrique</label>
+                            <select id="algorithmV1" name="algorithm11" class="form-control">
+                                <option value="" selected>Choisiser un algorithme</option>
+                                <option th:each="algo : ${algos}" th:value="${algo}"  th:text="${algo}"></option>
+                            </select>
+                        </div>
                         <div class="form-group row">
                             <label for="algorithmV">Sélectionner un algorithme de hachage</label>
                             <select id="algorithmV" name="algorithm1" class="form-control">
-                                <option value="" selected>Choisiser un algorithme</option>
+                                <option value="" selected>Choisiser un algorithme de hachage</option>
                                 <option th:each="algo : ${algos}" th:value="${algo}"  th:text="${algo}"></option>
                             </select>
                         </div>
@@ -251,10 +262,10 @@
                             <label for="fileV" class="btn btn-success mr-2" id="chooseFileButton">Choisir un fichier</label>
                         </div>
                         <div id="show"></div>
-<!--                        <div class="form-group row">-->
-<!--                            <label for="message1">Message</label>-->
-<!--                            <textarea class="form-control" id="message1" rows="2"></textarea>-->
-<!--                        </div>-->
+                        <!--                        <div class="form-group row">-->
+                        <!--                            <label for="message1">Message</label>-->
+                        <!--                            <textarea class="form-control" id="message1" rows="2"></textarea>-->
+                        <!--                        </div>-->
                         <script>
                             // Récupérez les éléments du formulaire
                             const messageOrFileSelectV = document.getElementById('messageOrFileV');

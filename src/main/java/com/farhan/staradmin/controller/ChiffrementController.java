@@ -22,6 +22,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import utils.KeyLoader;
+import utils.Utils;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -45,8 +46,13 @@ public class ChiffrementController {
         ModelMap modelMap = new ModelMap();
         List<Algorithme> algorithmes = algorithmeService.getAllAlgorithmes();
         Chiffrement chiffrement = new Chiffrement();
-
+        chiffrement.setType("symetrique");
+        chiffrement.setMode("Chiffrement");
+        Chiffrement dechiffrement = new Chiffrement();
+        dechiffrement.setType("asymetrique");
+        dechiffrement.setMode("Dechiffrement");
         modelMap.addAttribute("chiffrement", chiffrement); // 'user' is the attribute name
+        modelMap.addAttribute("dechiffrement", dechiffrement); // 'user' is the attribute name
         modelMap.addAttribute("algorithmes", algorithmes); // 'user' is the attribute name
         return modelMap;
     }
@@ -98,7 +104,7 @@ public class ChiffrementController {
         modelMap.addAttribute("user", new User()); // 'user' is the attribute name
         return modelMap;
     }
-    @PostMapping("/save-symetrique")
+    @PostMapping("/encrypt")
     public ResponseEntity<Resource> generateKey(@ModelAttribute("chiffrement") Chiffrement chiffrement,
                                                 @RequestParam("file") MultipartFile file,
                                                 @RequestParam("import") MultipartFile key,
@@ -106,43 +112,129 @@ public class ChiffrementController {
                                                 Model model) throws Exception {
 
         byte[] out = new byte[0];
-        if (!file.isEmpty() && (!key.isEmpty() || chiffrement.getKeyPath() != null)) {
+        if (!key.isEmpty() || chiffrement.getKeyPath() != null) {
+            chiffrement.setMode("Chiffrement");
             // Process the uploaded file here
             java.security.Key sk = null;
             Algorithme algorithm =  algorithmeService.getTypeAlgo(chiffrement.getAlgorithme());
             String type =algorithm.getType();
             String provider = algorithm.getProvider();
             chiffrement.setType(type);
-            String fileName = file.getOriginalFilename();
-            byte[] fileBytes = file.getBytes();
-            if (!key.isEmpty()){
-                if (chiffrement.getMode().equals("Chiffrement")){
-                    if (type.equals("symetrique")){
-                        sk = SecretKeyImpl.getKeyFromBytes(key.getBytes(), chiffrement.getAlgorithme());
-                    }
-                    else if (type.equals("asymetrique")){
-                        sk = KeyLoader.deserializePublicKey(key.getBytes(), chiffrement.getAlgorithme());
-                    }
-                }
-                else if (chiffrement.getMode().equals("Dechiffrement")){
-                    if (type.equals("symetrique")){
-                        sk = SecretKeyImpl.getKeyFromBytes(key.getBytes(), chiffrement.getAlgorithme());
-                    }
-                    else if (type.equals("asymetrique")){
-                        sk = KeyLoader.deserializePrivateKey(key.getBytes(), chiffrement.getAlgorithme());
-                    }
-                }
+            if (type.equals("symetrique")){
+                sk = SecretKeyImpl.getKeyFromBytes(key.getBytes(), chiffrement.getAlgorithme());
             }
+            else if (type.equals("asymetrique")){
+                sk = KeyLoader.deserializePublicKey(key.getBytes(), chiffrement.getAlgorithme());
+            }
+
+//            if (chiffrement.getMode().equals("Chiffrement")){
+//                if (type.equals("symetrique")){
+//                    sk = SecretKeyImpl.getKeyFromBytes(key.getBytes(), chiffrement.getAlgorithme());
+//                }
+//                else if (type.equals("asymetrique")){
+//                    sk = KeyLoader.deserializePublicKey(key.getBytes(), chiffrement.getAlgorithme());
+//                }
+//            }
+//            else if (chiffrement.getMode().equals("Dechiffrement")){
+//                if (type.equals("symetrique")){
+//                    sk = SecretKeyImpl.getKeyFromBytes(key.getBytes(), chiffrement.getAlgorithme());
+//                }
+//                else if (type.equals("asymetrique")){
+//                    sk = KeyLoader.deserializePrivateKey(key.getBytes(), chiffrement.getAlgorithme());
+//                }
+//            }
             if (chiffrement.getKeyPath() != null) {
                 sk = SecretKeyImpl.getKey(chiffrement.getKeyPath());
             }
-
-            out  = chiffrementService.createChiffrement(chiffrement,fileBytes,fileName,sk);
+            byte[] fileBytes = new byte[0];
+            System.out.println(chiffrement.getMessage().length());
+            if (!file.isEmpty() && chiffrement.getMessage().isEmpty()){
+                String fileName = file.getOriginalFilename();
+                fileBytes = file.getBytes();
+                out  = chiffrementService.createChiffrement(chiffrement,fileBytes,fileName,sk);
+            } else if (chiffrement.getMessage() != null && file.isEmpty()) {
+                fileBytes = chiffrement.getMessage().getBytes();
+                String filenames  = "cipher";
+                out  = chiffrementService.createChiffrement(chiffrement,fileBytes,filenames,sk);
+            }
             // Save the file or perform any necessary operations
             // For example, you can save the file to a specific location on your server
-            // Here, we're just printing some information about the file
-            System.out.println("Uploaded File Name: " + fileName);
-            System.out.println("File Size: " + file.getSize() + " bytes");
+            // Here, we're just prin
+        }
+
+        ByteArrayResource resource = new ByteArrayResource(out);
+
+        // Set the headers for the response
+        HttpHeaders headers = new HttpHeaders();
+        String fileout = "cipher-"+file.getOriginalFilename();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+fileout);
+
+        // Build the ResponseEntity with the ByteArrayResource and headers
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(out.length)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
+    }
+    @PostMapping("/decrypt")
+    public ResponseEntity<Resource> generateKeyde(@ModelAttribute("dechiffrement") Chiffrement chiffrement,
+                                                @RequestParam("file1") MultipartFile file,
+                                                @RequestParam("import1") MultipartFile key,
+                                                BindingResult bindingResult,
+                                                Model model) throws Exception {
+
+        byte[] out = new byte[0];
+        System.out.println("cle"+Utils.toHex(key.getBytes()));
+        if (!key.isEmpty()) {
+            // Process the uploaded file here
+            java.security.Key sk = null;
+            chiffrement.setMode("Dechiffrement");
+            Algorithme algorithm =  algorithmeService.getTypeAlgo(chiffrement.getAlgorithme());
+            String type =algorithm.getType();
+            String provider = algorithm.getProvider();
+            chiffrement.setType(type);
+            System.out.println("cle type"+type);
+            if (type.equals("symetrique")){
+                sk = SecretKeyImpl.getKeyFromBytes(key.getBytes(), chiffrement.getAlgorithme());
+                System.out.println("cle"+Utils.toHex(sk.getEncoded()));
+            }
+            else if (type.equals("asymetrique")){
+                    sk = KeyLoader.deserializePrivateKey(key.getBytes(), chiffrement.getAlgorithme());
+            }
+
+//            if (chiffrement.getMode().equals("Chiffrement")){
+//                if (type.equals("symetrique")){
+//                    sk = SecretKeyImpl.getKeyFromBytes(key.getBytes(), chiffrement.getAlgorithme());
+//                }
+//                else if (type.equals("asymetrique")){
+//                    sk = KeyLoader.deserializePublicKey(key.getBytes(), chiffrement.getAlgorithme());
+//                }
+//            }
+//            else if (chiffrement.getMode().equals("Dechiffrement")){
+//                if (type.equals("symetrique")){
+//                    sk = SecretKeyImpl.getKeyFromBytes(key.getBytes(), chiffrement.getAlgorithme());
+//                }
+//                else if (type.equals("asymetrique")){
+//                    sk = KeyLoader.deserializePrivateKey(key.getBytes(), chiffrement.getAlgorithme());
+//                }
+//            }
+            if (chiffrement.getKeyPath() != null) {
+                sk = SecretKeyImpl.getKey(chiffrement.getKeyPath());
+            }
+            byte[] fileBytes = new byte[0];
+            System.out.println(file);
+            if (!file.isEmpty() && chiffrement.getMessage().isEmpty()){
+                String fileName = file.getOriginalFilename();
+                fileBytes = file.getBytes();
+                out  = chiffrementService.createChiffrement(chiffrement,fileBytes,fileName,sk);
+            } else if (chiffrement.getMessage() != null && file.isEmpty()) {
+                fileBytes = chiffrement.getMessage().getBytes();
+                String filenames  = "cipher";
+                out  = chiffrementService.createChiffrement(chiffrement,fileBytes,filenames,sk);
+            }
+            // Save the file or perform any necessary operations
+            // For example, you can save the file to a specific location on your server
+            // Here, we're just prin
         }
 
         ByteArrayResource resource = new ByteArrayResource(out);

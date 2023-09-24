@@ -138,24 +138,10 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="collapse" href="#uis-basic" aria-expanded="false" aria-controls="uis-basic">
-                        <i class="menu-icon mdi mdi-content-copy"></i>
+                    <a class="nav-link" th:href="@{signature}">
+                        <i class="menu-icon mdi mdi-backup-restore"></i>
                         <span class="menu-title">Signature</span>
-                        <i class="menu-arrow"></i>
                     </a>
-                    <div class="collapse" id="uis-basic">
-                        <ul class="nav flex-column sub-menu">
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Configuration</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Calcul empreinte</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">Verification signature</a>
-                            </li>
-                        </ul>
-                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{algorithme}">

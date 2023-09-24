@@ -35,6 +35,7 @@ public class ChiffrementService {
 //            }
         }
         else  if (chiffrement.getMode().equals("Dechiffrement")) {
+            System.out.println("dfffffffffffffffffffffff" + Utils.toHex(file));
             cipher.init(Cipher.DECRYPT_MODE,sk);
 //            if (sk.getFormat().equalsIgnoreCase("PKCS#8")) {
 //                PrivateKey priv = KeyLoader.deserializePrivateKey(sk.getEncoded(), chiffrement.getAlgorithme());

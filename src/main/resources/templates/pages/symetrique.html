@@ -8,195 +8,194 @@
 <body>
 <section layout:fragment="content">
 
-    <div>
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">Chiffrement et Dechiffrement</h4>
-                <form th:object="${chiffrement}" th:action="@{save-symetrique}" method="post" class="form-sample" enctype="multipart/form-data">
-                    <div class="form-group row">
-                        <label for="algorithm">Sélectionner un algorithme:</label>
-                        <select id="algorithm" name="algorithm" class="form-control" th:field="*{algorithme}">
-                            <option th:each="algo : ${algorithmes}" th:value="${algo.name}"  th:text="${algo.type + ' ' + algo.name}"></option>
-                        </select>
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-sm-3 col-form-label" for="taille">Taille</label>
-                        <select class="form-control form-control-lg" id="taille" th:field="*{size}">
-                        </select>
-                    </div>
-                    <div class="form-group row">
-                        <div>
-                            <button type="button" id="genererCleButton" class="btn btn-success mr-2">Chercher une cle dans la base de donne</button>
+    <div class="row">
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Chiffrement</h4>
+                    <form th:object="${chiffrement}" th:action="@{encrypt}" method="post" class="form-sample" enctype="multipart/form-data">
+                        <div class="form-group row">
+                            <label for="algorithm">Sélectionner un algorithme:</label>
+                            <select id="algorithm" name="algorithm" class="form-control" th:field="*{algorithme}">
+                                <option th:each="algo : ${algorithmes}" th:value="${algo.name}" th:text="${algo.type + ' ' + algo.name}"></option>
+                            </select>
                         </div>
-                        <div>
-                            <input type="file" id="import" style="display: none;" name="import">
-                            <label for="import" class="btn btn-success mr-2">Importer une cle</label>
+                        <div class="form-group row">
+                            <!--                        <div>-->
+                            <!--                            <button type="button" id="genererCleButton" class="btn btn-success mr-2">Chercher une clé dans la base de données</button>-->
+                            <!--                        </div>-->
+                            <div class="form-group row">
+                                <input type="file" id="import" name="import" style="display:none">
+                                <label for="import" class="btn btn-success mr-2">Importer une clé</label>
+                            </div>
+                            <!--                        <div>-->
+                            <!--                            <button type="button" id="genererCle" class="btn btn-success mr-2">Générer une clé de chiffrement</button>-->
+                            <!--                        </div>-->
                         </div>
-                        <div>
-                            <button type="button" id="genererCle" class="btn btn-success mr-2">Generer une de chiffrement</button>
+                        <div class="form-group row" id="kename">
                         </div>
-                    </div>
-                    <div class="form-group row" id="getkey" style="display: none;">
-                        <label class="col-form-label" id="label" for="key">Cle de chiffrement disponible dans la base de donne</label>
-                        <select class="form-control form-control-lg" id="key" th:field="*{keyPath}">
-                        </select>
-                    </div>
-                    <script th:inline="javascript">
-                        /*<![CDATA[*/
-                        // Get references to the select elements
-                        const algorithmSelect = document.getElementById('algorithm');
-                        const size = document.getElementById('taille');
-                        const label = document.getElementById('label');
-                        const keySelect = document.getElementById('key');
-                        const getkeySelect = document.getElementById('getkey');
-                        const keygenSelect = document.getElementById('genererCle');
-                        // Define algorithm options based on your data
-                        const algorithmOptions = {
-                            "symetrique": ["AES", "DES"],
-                            "asymetrique": ["RSA", "ECDSA"],
-                            "partage cle": ["Diffie-Hellman"]
-                        }; // Replace this with your actual data
+                        <div class="form-group row" id="getkey" style="display: none;">
+                            <label class="col-form-label" id="label" for="key">Clé de chiffrement disponible dans la base de données</label>
+                            <select class="form-control form-control-lg" id="key" th:field="*{keyPath}">
+                            </select>
+                        </div>
+                        <script th:inline="javascript">
+                            /*<![CDATA[*/
+                            // Get references to the select elements
+                            const algorithmSelect = document.getElementById('algorithm');
+                            const label = document.getElementById('label');
+                            const keySelect = document.getElementById('key');
+                            const getkeySelect = document.getElementById('getkey');
+                            const keygenSelect = document.getElementById('genererCle');
+                            const importKey = document.getElementById('import');
+                            const keyname = document.getElementById('kename');
+                            // Define algorithm options based on your data
+                            const algorithmOptions = {
+                                "symetrique": ["AES", "DES"],
+                                "asymetrique": ["RSA", "ECDSA"],
+                                "partage cle": ["Diffie-Hellman"]
+                            }; // Replace this with your actual data
+                            // Ajoutez un gestionnaire d'événements pour l'élément de sélection de la clé
+                            importKey.addEventListener('change', function () {
+                                // Obtenez la liste des fichiers sélectionnés (peut contenir plusieurs fichiers)
+                                const selectedFiles = importKey.files;
 
-                        // Function to update the algorithm dropdown based on the selected type
-                        function updateSizeOptions() {
-                            const selectedAlgo = algorithmSelect.value;
-                            size.innerHTML = ''; // Clear the current options
+                                // Vérifiez s'il y a au moins un fichier sélectionné
+                                if (selectedFiles.length > 0) {
+                                    // Récupérez le nom du premier fichier sélectionné
+                                    const selectedFileName = selectedFiles[0].name;
 
-                            const allSizeAlgorithm = /*[[ ${chiffrement.getAllSizeAlgorithm()} ]]*/; // Remove the extra *
-                            console.log(allSizeAlgorithm);
-                            if (allSizeAlgorithm[selectedAlgo]) {
-                                allSizeAlgorithm[selectedAlgo].forEach(sizeValue => {
-                                    const option = document.createElement('option');
-                                    option.value = sizeValue;
-                                    option.textContent = sizeValue;
-                                    size.appendChild(option);
-                                });
+                                    // Mettez à jour l'élément d'étiquette avec le nom du fichier
+                                    const h3 = document.createElement('h3');
+                                    h3.innerHTML = "Clé de chiffrement sélectionnée : " + selectedFileName;
+                                    keyname.innerHTML = ''; // Effacez le contenu précédent
+                                    keyname.appendChild(h3);
+                                } else {
+                                    const p = document.createElement('p');
+                                    p.innerHTML = "Aucun fichier sélectionné";
+                                    p.style.color = 'red';
+                                    keyname.appendChild(p);
+                                }
+                            });
+
+
+
+                            // Function to update the algorithm dropdown based on the selected type
+                            function generateKey(){
+                                const enteredName = algorithmSelect.value;
+                                const selectedSize = size.value;
+                                fetch('gen-key', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        algorithme: enteredName,
+                                        size: selectedSize
+                                    })
+                                })
+                                    .then(response => response.blob())
+                                    .then(blob => {
+                                        const blobUrl = URL.createObjectURL(blob);
+
+                                        // Créez un lien de téléchargement
+                                        const a = document.createElement('a');
+                                        a.style.display = 'none';
+                                        a.href = blobUrl;
+                                        a.download = 'secretkey-' + enteredName+"-"+selectedSize+".key";
+                                        // Ajoutez le lien au DOM
+                                        document.body.appendChild(a);
+
+                                        // Cliquez sur le lien pour déclencher le téléchargement
+                                        a.click();
+
+                                        // Libérez la ressource URL après le téléchargement
+                                        URL.revokeObjectURL(blobUrl);
+                                    })
+                                    .catch(error => {
+                                        console.error('Erreur lors de la requête AJAX :', error);
+                                    });
                             }
-                        }
-                        function generateKey(){
-                            const enteredName = algorithmSelect.value;
-                            const selectedSize = size.value;
-                            fetch('gen-key', {
-                                method: 'POST', // ou 'GET' selon la méthode de votre contrôleur
-                                headers: {
-                                    'Content-Type': 'application/json' // ou 'application/x-www-form-urlencoded' si nécessaire
-                                },
-                                // Vous pouvez ajouter des données à envoyer dans le corps de la requête ici
-                                body: JSON.stringify({
-                                    // Exemple de données à envoyer si nécessaire
-                                    algorithme: enteredName,
-                                    size: selectedSize
+                            function getKeys(){
+                                const enteredName = algorithmSelect.value;
+                                const selectedSize = size.value;
+                                fetch('getkeys', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        algorithme: enteredName,
+                                        size: selectedSize
+                                    })
                                 })
-                            })
-                                .then(response => response.blob())
-                                .then(blob => {
-                                    const blobUrl = URL.createObjectURL(blob);
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data){
+                                            data.forEach(key => {
+                                                const option = document.createElement('option');
+                                                option.value = key.path;
+                                                option.textContent = "clé " + key.name + " de " + key.size + " bits";
+                                                keySelect.appendChild(option);
+                                            });
+                                        }
+                                    })
+                                    .catch(error => {
+                                        keySelect.hidden = true;
+                                        label.innerHTML = "aucune clé trouvée";
+                                        label.style.color = 'red';
+                                    });
+                            }
+                            // Add an event listener to the type dropdown to update the algorithm dropdown
+                            keygenSelect.addEventListener('click',generateKey);
+                            size.addEventListener('change',getKeys);
+                            size.addEventListener('change',function () {
+                                keySelect.innerHTML = "";
+                            });
+                            document.getElementById('genererCleButton').addEventListener('click', function() {
+                                getkeySelect.style.display = 'block';
+                                getKeys();
+                            });
+                            algorithmSelect.addEventListener('input', function () {
+                                keySelect.innerHTML = "";
+                            });
+                            // Initial population of the algorithm dropdown
+                            /*]]>*/
+                        </script>
+                        <div class="form-group row">
+                            <label for="messageOrFile">Choisir entre un message ou un fichier :</label>
+                            <select id="messageOrFile" class="form-control">
+                                <option value="message">Message</option>
+                                <option value="file">Fichier</option>
+                            </select>
+                        </div>
+                        <div id="messageInput" class="form-group row" style="display: none;">
+                            <label for="message">Message :</label>
+                            <input type="text" id="message" class="form-control" th:field="*{message}">
+                        </div>
+                        <div id="fileInput" class="form-group row" style="display: none;">
+                            <input type="file" id="file" name="file" style="display: none;">
+                            <label for="file" class="btn btn-success mr-2" id="chooseFileButton">Choisir un fichier</label>
+                        </div>
+                        <div class="form-group row" id="filename">
+                        </div>
 
-                                    // Créez un lien de téléchargement
-                                    const a = document.createElement('a');
-                                    a.style.display = 'none';
-                                    a.href = blobUrl;
-                                    a.download = 'secretkey-' + enteredName+"-"+selectedSize+".key"; // Remplacez par le nom de votre fichier avec l'extension appropriée
-                                    // Ajoutez le lien au DOM
-                                    document.body.appendChild(a);
-
-                                    // Cliquez sur le lien pour déclencher le téléchargement
-                                    a.click();
-
-                                    // Libérez la ressource URL après le téléchargement
-                                    URL.revokeObjectURL(blobUrl);
-                                    // Vous pouvez faire ce que vous voulez avec les données renvoyées par le contrôleur
-                                })
-                                .catch(error => {
-                                    console.error('Erreur lors de la requête AJAX :', error);
-                                });
-                        }
-                        function getKeys(){
-                            const enteredName = algorithmSelect.value;
-                            const selectedSize = size.value;
-                            fetch('getkeys', {
-                                method: 'POST', // ou 'GET' selon la méthode de votre contrôleur
-                                headers: {
-                                    'Content-Type': 'application/json' // ou 'application/x-www-form-urlencoded' si nécessaire
-                                },
-                                // Vous pouvez ajouter des données à envoyer dans le corps de la requête ici
-                                body: JSON.stringify({
-                                    // Exemple de données à envoyer si nécessaire
-                                    algorithme: enteredName,
-                                    size: selectedSize
-                                })
-                            })
-                                .then(response => response.json())
-                                .then(data => {
-                                    // Traitez la réponse ici (data) si votre contrôleur renvoie des données
-                                    if (data){
-                                        data.forEach(key => {
-                                            const option = document.createElement('option');
-                                            option.value = key.path;
-                                            option.textContent = "cle " + key.name + " de " + key.size + " bits";
-                                            keySelect.appendChild(option);
-                                        });
-                                    }
-
-                                    // Vous pouvez faire ce que vous voulez avec les données renvoyées par le contrôleur
-                                })
-                                .catch(error => {
-                                    keySelect.hidden = true;
-                                    label.innerHTML = "aucune cle trouve";
-                                    label.style.color = 'red';
-                                });
-                        }
-                        // Add an event listener to the type dropdown to update the algorithm dropdown
-                        algorithmSelect.addEventListener('change',updateSizeOptions);
-                        keygenSelect.addEventListener('click',generateKey)
-                        size.addEventListener('change',getKeys);
-                        size.addEventListener('change',function () {
-                            keySelect.innerHTML = "";
-                        });
-                        document.getElementById('genererCleButton').addEventListener('click', function() {
-                            // Effectuez une requête AJAX vers l'URL de votre contrôleur
-                            getkeySelect.style.display = 'block';
-                            getKeys();
-                        });
-                        algorithmSelect.addEventListener('input', function () {
-                            keySelect.innerHTML = "";
-                        });
-                        // Initial population of the algorithm dropdown
-                        updateSizeOptions();
-                        /*]]>*/
-                    </script>
-                <div class="form-group row">
-                    <label class="col-form-label" for="mode">Operation</label>
-                    <select class="form-control form-control-lg" id="mode" name="mode" th:field="*{mode}">
-                        <option value="" selected>Choisiser le mode operatoire</option>
-                        <option th:each="mode : ${chiffrement.getListeModeChiffrement()}" th:value="${mode}" th:text="${mode}"></option>
-                    </select>
-                </div>
-
-                    <div class="form-group row">
-                        <label for="messageOrFile">Choisir entre un message ou un fichier :</label>
-                        <select id="messageOrFile" class="form-control">
-                            <option value="message">Message</option>
-                            <option value="file">Fichier</option>
-                        </select>
-                    </div>
-
-                    <div id="messageInput" class="form-group row">
-                        <label for="message">Message :</label>
-                        <input type="textarea" id="message" class="form-control">
-                    </div>
-                    <div id="fileInput3" class="form-group row" style="display: none;">
-                        <input type="file" id="file" name="file" style="display: none;">
-                        <label for="file" class="btn btn-success mr-2" id="chooseFileButton">Choisir un fichier</label>
-                    </div>
-                    <script>
-                        // Récupérez les éléments du formulaire
-                        const messageOrFileSelect = document.getElementById('messageOrFile');
-                        const messageInput = document.getElementById('messageInput');
-                        const fileInput = document.getElementById('fileInput');
-
-                        // Ajoutez un gestionnaire d'événement pour le changement de l'option
-                        messageOrFileSelect.addEventListener('change', function () {
+                        <script>
+                            // Récupérez les éléments du formulaire
+                            const messageOrFileSelect = document.getElementById('messageOrFile');
+                            const messageInput = document.getElementById('messageInput');
+                            const fileInput = document.getElementById('fileInput');
+                            // Ajoutez un gestionnaire d'événement pour le changement de l'option
+                            messageOrFileSelect.addEventListener('change', function () {
+                                if (messageOrFileSelect.value === 'message') {
+                                    messageInput.style.display = 'block';
+                                    fileInput.style.display = 'none';
+                                } else if (messageOrFileSelect.value === 'file') {
+                                    messageInput.style.display = 'none';
+                                    fileInput.style.display = 'block';
+                                }
+                            });
+                            // Assurez-vous d'initialiser l'affichage en fonction de la valeur initiale de l'option
                             if (messageOrFileSelect.value === 'message') {
                                 messageInput.style.display = 'block';
                                 fileInput.style.display = 'none';
@@ -204,50 +203,370 @@
                                 messageInput.style.display = 'none';
                                 fileInput.style.display = 'block';
                             }
-                        });
+                        </script>
+                        <script>
+                            modeOption = document.getElementById("messageOrFile");
+                            divMessage = document.getElementById("messageInput");
+                            divFile = document.getElementById("fileInput");
+                            div = document.getElementById("divbtn");
+                            p = document.getElementById("p");
+                            const fileInput1 = document.getElementById('file');
+                            // Function to handle file selection
+                            divFile.addEventListener('change', function () {
+                                const selectedFile1 = fileInput1.files[0];
+                                if (selectedFile1) {
+                                    // Vous pouvez accéder au fichier sélectionné en utilisant la variable selectedFile1
+                                    console.log('Selected file:', selectedFile1);
+                                }
+                            });
+                        </script>
+                        <script>
+                            divclick = document.getElementById('divbtn');
+                            async function generateKeyAndSave() {
+                                const enteredName = algorithmSelect.value;
+                                const selectedSize = size.value;
 
-                        // Assurez-vous d'initialiser l'affichage en fonction de la valeur initiale de l'option
-                        if (messageOrFileSelect.value === 'message') {
-                            messageInput.style.display = 'block';
-                            fileInput.style.display = 'none';
-                        } else if (messageOrFileSelect.value === 'file') {
-                            messageInput.style.display = 'none';
-                            fileInput.style.display = 'block';
-                        }
+                                try {
+                                    // Utilisez l'API showDirectoryPicker pour demander à l'utilisateur de choisir un répertoire
+                                    const directoryHandle = await window.showDirectoryPicker();
 
-                    </script>
-                    <div id="divbtn" class="form-group row">
-                        <button  type="submit" id="chiffrer" class="btn btn-success mr-2">
-                            <p id="p"></p>
-                        </button>
-                    </div>
-                    <script>
-                        mode = document.getElementById("mode");
-                        div = document.getElementById("divbtn");
-                        p = document.getElementById("p");
-                        const fileInput1 = document.getElementById('file');
+                                    // Créez un fichier dans le répertoire choisi
+                                    const fileHandle = await directoryHandle.getFileHandle('secretkey-' + enteredName + "-" + selectedSize + ".key", { create: true });
 
-                        // Function to handle file selection
-                        fileInput1.addEventListener('change', function () {
-                            const selectedFile1 = fileInput1.files[0];
-                            if (selectedFile1) {
-                                // You can access the selected file using selectedFile variable
-                                console.log('Selected file:', selectedFile1);
+                                    // Obtenez un flux d'écriture pour le fichier
+                                    const writable = await fileHandle.createWritable();
+
+                                    // Générez la clé et écrivez-la dans le fichier
+                                    const generatedKey = await generateKey(enteredName, selectedSize);
+                                    await writable.write(generatedKey);
+
+                                    // Terminez l'écriture du fichier
+                                    await writable.close();
+
+                                    alert("Clé générée et enregistrée avec succès !");
+                                } catch (error) {
+                                    console.error('Erreur lors de la sélection du répertoire :', error);
+                                }
                             }
-                        });
-                      function createBtn() {
-                          btn = document.getElementById("chiffrer");
-                          if (mode.value){
-                              p.textContent = mode.value;
-                          }
-                      }
-                      mode.addEventListener('change',createBtn);
-                      createBtn();
-                    </script>
-                </form>
+
+                            // Ajoutez un gestionnaire d'événement au bouton "Enregistrer la clé"
+                            divclick.addEventListener('click', generateKeyAndSave);
+
+
+                        </script>
+                        <script>
+                            const filename = document.getElementById('filename');
+                            fileInput1.addEventListener('change', function () {
+                                // Obtenez la liste des fichiers sélectionnés (peut contenir plusieurs fichiers)
+                                const selectedFiles = fileInput1.files;
+
+                                // Vérifiez s'il y a au moins un fichier sélectionné
+                                if (selectedFiles.length > 0) {
+                                    // Récupérez le nom du premier fichier sélectionné
+                                    const selectedFileName = selectedFiles[0].name;
+
+                                    // Mettez à jour l'élément d'étiquette avec le nom du fichier
+                                    const h3 = document.createElement('h3');
+                                    h3.innerHTML = "fichier selectionne : " + selectedFileName;
+                                    filename.innerHTML = ''; // Effacez le contenu précédent
+                                    filename.appendChild(h3);
+                                } else {
+                                    const p = document.createElement('p');
+                                    p.innerHTML = "Aucun fichier sélectionné";
+                                    p.style.color = 'red';
+                                    filename.appendChild(p);
+                                }
+                            });
+                        </script>
+                        <div id="divbtn" class="form-group row">
+                            <button type="submit" id="chiffrer" class="btn btn-success mr-2">
+                                <p>Chiffrer</p>
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
+        <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Déchiffrement</h4>
+                    <form th:object="${dechiffrement}" th:action="@{decrypt}" method="post" class="form-sample" enctype="multipart/form-data">
+                        <div class="form-group row">
+                            <label for="algorithm">Sélectionner un algorithme:</label>
+                            <select id="algorithm1" name="algorithm1" class="form-control" th:field="*{algorithme}">
+                                <option th:each="algo : ${algorithmes}" th:value="${algo.name}" th:text="${algo.type + ' ' + algo.name}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group row">
+                            <!--                        <div>-->
+                            <!--                            <button type="button" id="genererCleButton" class="btn btn-success mr-2">Chercher une clé dans la base de données</button>-->
+                            <!--                        </div>-->
+                            <div class="form-group row">
+                                <input type="file" id="import1" name="import1" style="display:none">
+                                <label for="import1" class="btn btn-success mr-2">Importer une clé</label>
+                            </div>
+                        </div>
+                        <div class="form-group row" id="kename1">
+                        </div>
+                        <div class="form-group row" id="getkey1" style="display: none;">
+                            <label class="col-form-label" id="label1" for="key">Clé de chiffrement disponible dans la base de données</label>
+                            <select class="form-control form-control-lg" id="key1" th:field="*{keyPath}">
+                            </select>
+                        </div>
+                        <script th:inline="javascript">
+                            /*<![CDATA[*/
+                            // Get references to the select elements
+                            const algorithmSelect1 = document.getElementById('algorithm1');
+                            const label1 = document.getElementById('label1');
+                            const keySelect1 = document.getElementById('key1');
+                            const getkeySelect1 = document.getElementById('getkey1');
+                            const keygenSelect1 = document.getElementById('genererCle1');
+                            const importKey1 = document.getElementById('import1');
+                            const keyname1 = document.getElementById('kename1');
+                            // Define algorithm options based on your data
+                            // Ajoutez un gestionnaire d'événements pour l'élément de sélection de la clé
+                            importKey1.addEventListener('change', function () {
+                                // Obtenez la liste des fichiers sélectionnés (peut contenir plusieurs fichiers)
+                                const selectedFiles1 = importKey1.files;
 
+                                // Vérifiez s'il y a au moins un fichier sélectionné
+                                if (selectedFiles1.length > 0) {
+                                    // Récupérez le nom du premier fichier sélectionné
+                                    const selectedFileName1 = selectedFiles1[0].name;
+
+                                    // Mettez à jour l'élément d'étiquette avec le nom du fichier
+                                    const h3 = document.createElement('h3');
+                                    h3.innerHTML = "Clé de chiffrement sélectionnée : " + selectedFileName1;
+                                    keyname1.innerHTML = ''; // Effacez le contenu précédent
+                                    keyname1.appendChild(h3);
+                                } else {
+                                    const p = document.createElement('p');
+                                    p.innerHTML = "Aucun fichier sélectionné";
+                                    p.style.color = 'red';
+                                    keyname1.appendChild(p);
+                                }
+                            });
+
+
+
+                            // Function to update the algorithm dropdown based on the selected type
+                            function generateKey(){
+                                const enteredName = algorithmSelect1.value;
+                                const selectedSize = size1.value;
+                                fetch('gen-key', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        algorithme: enteredName,
+                                        size: selectedSize
+                                    })
+                                })
+                                    .then(response => response.blob())
+                                    .then(blob => {
+                                        const blobUrl = URL.createObjectURL(blob);
+
+                                        // Créez un lien de téléchargement
+                                        const a = document.createElement('a');
+                                        a.style.display = 'none';
+                                        a.href = blobUrl;
+                                        a.download = 'secretkey-' + enteredName+"-"+selectedSize+".key";
+                                        // Ajoutez le lien au DOM
+                                        document.body.appendChild(a);
+
+                                        // Cliquez sur le lien pour déclencher le téléchargement
+                                        a.click();
+
+                                        // Libérez la ressource URL après le téléchargement
+                                        URL.revokeObjectURL(blobUrl);
+                                    })
+                                    .catch(error => {
+                                        console.error('Erreur lors de la requête AJAX :', error);
+                                    });
+                            }
+                            function getKeys(){
+                                const enteredName = algorithmSelect.value;
+                                const selectedSize = size.value;
+                                fetch('getkeys', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        algorithme: enteredName,
+                                        size: selectedSize
+                                    })
+                                })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data){
+                                            data.forEach(key => {
+                                                const option = document.createElement('option');
+                                                option.value = key.path;
+                                                option.textContent = "clé " + key.name + " de " + key.size + " bits";
+                                                keySelect.appendChild(option);
+                                            });
+                                        }
+                                    })
+                                    .catch(error => {
+                                        keySelect.hidden = true;
+                                        label.innerHTML = "aucune clé trouvée";
+                                        label.style.color = 'red';
+                                    });
+                            }
+                            // Add an event listener to the type dropdown to update the algorithm dropdown
+                            keygenSelect1.addEventListener('click',generateKey);
+                            document.getElementById('genererCleButton').addEventListener('click', function() {
+                                getkeySelect1.style.display = 'block';
+                                getKeys();
+                            });
+                            algorithmSelect1.addEventListener('input', function () {
+                                keySelect1.innerHTML = "";
+                            });
+                            // Initial population of the algorithm dropdown
+                            /*]]>*/
+                        </script>
+                        <div class="form-group row">
+                            <label for="messageOrFile2">Choisir entre un message ou un fichier :</label>
+                            <select id="messageOrFile2" class="form-control">
+                                <option value="message">Message</option>
+                                <option value="file">Fichier</option>
+                            </select>
+                        </div>
+                        <div id="messageInput1" class="form-group row" style="display: none;">
+                            <label for="message1">Message :</label>
+                            <input type="text" id="message1" class="form-control" th:field="*{message}">
+                        </div>
+                        <div id="fileInput1" class="form-group row" style="display: none;">
+                            <input type="file" id="file1" name="file1" style="display: none;">
+                            <label for="file1" class="btn btn-success mr-2" id="chooseFileButton1">Choisir un fichier</label>
+                        </div>
+                        <div class="form-group row" id="filename1">
+                        </div>
+                        <div id="divbtn1" class="form-group row">
+                            <button type="submit" id="dechiffrer" class="btn btn-success mr-2">
+                                <p>Dechiffrer</p>
+                            </button>
+                        </div>
+<!--                        <script>-->
+<!--                            // Récupérez les éléments du formulaire-->
+<!--                            const messageOrFileSelect1 = document.getElementById('messageOrFile');-->
+<!--                            const messageInput1 = document.getElementById('messageInput1');-->
+<!--                            const fileInput3 = document.getElementById('fileInput1');-->
+<!--                            // Ajoutez un gestionnaire d'événement pour le changement de l'option-->
+<!--                            messageOrFileSelect1.addEventListener('change', function () {-->
+<!--                                if (messageOrFileSelect1.value === 'message') {-->
+<!--                                    messageInput1.style.display = 'block';-->
+<!--                                    fileInput3.style.display = 'none';-->
+<!--                                } else if (messageOrFileSelect1.value === 'file') {-->
+<!--                                    messageInput1.style.display = 'none';-->
+<!--                                    fileInput3.style.display = 'block';-->
+<!--                                }-->
+<!--                            });-->
+<!--                            // Assurez-vous d'initialiser l'affichage en fonction de la valeur initiale de l'option-->
+<!--                            if (messageOrFileSelect1.value === 'message') {-->
+<!--                                messageInput1.style.display = 'block';-->
+<!--                                fileInput3.style.display = 'none';-->
+<!--                            } else if (messageOrFileSelect1.value === 'file') {-->
+<!--                                messageInput1.style.display = 'none';-->
+<!--                                fileInput3.style.display = 'block';-->
+<!--                            }-->
+<!--                        </script>-->
+                        <script>
+                            modeOption1 = document.getElementById("messageOrFile2");
+                            divMessage1 = document.getElementById("messageInput1");
+                            divFile1 = document.getElementById("fileInput1");
+                            div1 = document.getElementById("divbtn1");
+                            p1 = document.getElementById("p");
+                            mode2 = document.getElementById('messageOrFile2');
+                            const fileInput2 = document.getElementById('file1');
+                            // Function to handle file selection
+                            divFile1.addEventListener('change', function () {
+                                const selectedFile1 = fileInput2.files[0];
+                                if (selectedFile1) {
+                                    // Vous pouvez accéder au fichier sélectionné en utilisant la variable selectedFile1
+                                    console.log('Selected file:', selectedFile1);
+                                }
+                            });
+                            function addOption1() {
+                                if (mode2.value === "message"){
+                                    divFile1.style.display = 'none'
+                                    divMessage1.style.display = 'block'
+                                }
+                                else if (mode2.value === "file"){
+                                    divMessage1.style.display = 'none'
+                                    divFile1.style.display = 'block'
+                                }
+                            }
+                            modeOption1.addEventListener('change',function () {
+                                addOption1();
+                            })
+                            addOption1();
+                        </script>
+                        <script>
+                            divclick1 = document.getElementById('divbtn1');
+                            async function generateKeyAndSave1() {
+                                const enteredName = algorithmSelect1.value;
+                                const selectedSize = size.value;
+
+                                try {
+                                    // Utilisez l'API showDirectoryPicker pour demander à l'utilisateur de choisir un répertoire
+                                    const directoryHandle = await window.showDirectoryPicker();
+
+                                    // Créez un fichier dans le répertoire choisi
+                                    const fileHandle = await directoryHandle.getFileHandle('secretkey-' + enteredName + "-" + selectedSize + ".key", { create: true });
+
+                                    // Obtenez un flux d'écriture pour le fichier
+                                    const writable = await fileHandle.createWritable();
+
+                                    // Générez la clé et écrivez-la dans le fichier
+                                    const generatedKey = await generateKey(enteredName, selectedSize);
+                                    await writable.write(generatedKey);
+
+                                    // Terminez l'écriture du fichier
+                                    await writable.close();
+
+                                    alert("Clé générée et enregistrée avec succès !");
+                                } catch (error) {
+                                    console.error('Erreur lors de la sélection du répertoire :', error);
+                                }
+                            }
+
+                            // Ajoutez un gestionnaire d'événement au bouton "Enregistrer la clé"
+                            divclick1.addEventListener('click', generateKeyAndSave1);
+
+
+                        </script>
+                        <script>
+                            const filename1 = document.getElementById('filename1');
+                            fileInput2.addEventListener('change', function () {
+                                // Obtenez la liste des fichiers sélectionnés (peut contenir plusieurs fichiers)
+                                const selectedFiles = fileInput2.files;
+
+                                // Vérifiez s'il y a au moins un fichier sélectionné
+                                if (selectedFiles.length > 0) {
+                                    // Récupérez le nom du premier fichier sélectionné
+                                    const selectedFileName = selectedFiles[0].name;
+
+                                    // Mettez à jour l'élément d'étiquette avec le nom du fichier
+                                    const h3 = document.createElement('h3');
+                                    h3.innerHTML = "fichier selectionne : " + selectedFileName;
+                                    filename1.innerHTML = ''; // Effacez le contenu précédent
+                                    filename1.appendChild(h3);
+                                } else {
+                                    const p = document.createElement('p');
+                                    p.innerHTML = "Aucun fichier sélectionné";
+                                    p.style.color = 'red';
+                                    filename1.appendChild(p);
+                                }
+                            });
+                        </script>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
 
