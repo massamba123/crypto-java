@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Java Crypto</title>
+    <link rel="stylesheet" th:href="@{/vendors/iconfonts/mdi/css/materialdesignicons.min.css}">
+    <link rel="stylesheet" th:href="@{/vendors/css/vendor.bundle.base.css}">
+    <link rel="stylesheet" th:href="@{/vendors/css/vendor.bundle.addons.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="shortcut icon" th:href="@{/images/favicon.png}" />
+    <style>
+        /* Increase the font size for specific elements */
+        .card-title {
+            font-size: 24px; /* Adjust the size as needed */
+        }
+
+        .card-description {
+            font-size: 18px; /* Adjust the size as needed */
+        }
+
+        /* Increase the font size for form labels */
+        .col-form-label {
+            font-size: 16px; /* Adjust the size as needed */
+        }
+        /* Increase the font size for form controls */
+        .form-control {
+            font-size: 16px; /* Adjust the size as needed */
+        }
+    </style>
+
+</head>
+
+<body style="background-color: #2d4278;">
+<section>
+    <div class="row flex-grow d-flex justify-content-center align-items-center" style="margin: 10px">
+        <div class="col-md-6 d-flex align-items-stretch grid-margin stretch-card">
+            <div class="col-12 stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Connexion</h4>
+                        <form th:action="@{connexion}" method="post" class="forms-sample">
+                            <div class="form-group row">
+                                <label for="exampleInputEmail2" class="col-sm-3 col-form-label">Username</label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="username" class="form-control" id="exampleInputEmail2" placeholder="Enter username">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="exampleInputPassword2" class="col-sm-3 col-form-label">Password</label>
+                                <div class="col-sm-9">
+                                    <input type="password" name="password" class="form-control" id="exampleInputPassword2" placeholder="Password">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success mr-2">Connexion</button>
+                            <button class="btn btn-light">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 grid-margin grid-margin stretch-card" style="padding: 50px">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Creation Compte</h4>
+                    <form th:object="${user}" method="post" class="forms-sample">
+                        <div class="form-group">
+                            <label for="first_name">Prenom</label>
+                            <input type="text" class="form-control" th:field="*{first_name}" id="first_name" placeholder="Prenom">
+                        </div>
+                        <div class="form-group">
+                            <label for="last_name">Nom</label>
+                            <input type="text" class="form-control" name="last_name" th:field="*{last_name}" id="last_name" placeholder="Nom">
+                        </div>
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="email" class="form-control" name="username" th:field="*{username}" id="username" placeholder="Email">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" name="password" class="form-control" th:field="*{password}" id="password" placeholder="Password">
+                        </div>
+                        <!--          <div class="form-group">-->
+                        <!--            <label>File upload</label>-->
+                        <!--            <input type="file" name="img[]" class="file-upload-default">-->
+                        <!--            <div class="input-group col-xs-12">-->
+                        <!--              <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image">-->
+                        <!--              <span class="input-group-append">-->
+                        <!--                          <button class="file-upload-browse btn btn-info" type="button">Upload</button>-->
+                        <!--                        </span>-->
+                        <!--            </div>-->
+                        <!--          </div>-->
+                        <button id="connexion" type="button" class="btn btn-success mr-2">Submit</button>
+                        <button class="btn btn-light">Cancel</button>
+                    </form>
+                    <div>
+                        <span id="show"></span>
+                    </div>
+                    <script>
+                        function reset() {
+                            document.getElementById("first_name").value = "";
+                                 document.getElementById("last_name").value = "";
+                                 document.getElementById("username").value = "";
+                                 document.getElementById("password").value = "";
+                        }
+                        function compteCeation() {
+                            const data = {
+                                first_name: document.getElementById("first_name").value,
+                                last_name: document.getElementById("last_name").value,
+                                username: document.getElementById("username").value,
+                                password: document.getElementById("password").value,
+                            }
+                            const formData = new FormData();
+                            formData.append("first_name",data.first_name);
+                            formData.append("last_name",data.last_name);
+                            formData.append("username",data.username);
+                            formData.append("password",data.password);
+                            fetch('save-user', {
+                                method: 'POST',
+                                body: formData
+                            })
+                                .then(response => response.text())
+                                .then(data => {
+                                    console.log(data)
+                                    document.getElementById("show").style.color = 'green';
+                                    document.getElementById("show").innerHTML = data;
+                                })
+                                .catch(error => {
+                                });
+                        }
+                        document.getElementById("connexion").addEventListener('click', function (e) {
+                            e.preventDefault(); // Empêcher la soumission du formulaire
+                            compteCeation();
+                            reset();
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>
