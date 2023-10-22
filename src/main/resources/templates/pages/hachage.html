@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout}"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html">
 <head>
     <title>Home</title>
 </head>
@@ -120,6 +120,7 @@
                                     fileName.innerHTML = ''; // Effacez le contenu précédent
                                     fileName.appendChild(h3);
                                 } else {
+                                    fileName.innerHTML = '';
                                     const p = document.createElement('p');
                                     p.innerHTML = "Aucun fichier sélectionné";
                                     p.style.color = 'red';
@@ -133,9 +134,6 @@
                         </script>
                         <button id="calcul" type="button" class="btn btn-success mr-2">Calculer l'empreinte</button>
                     </form>
-                    <div id="hash">
-
-                    </div>
                     <script>
                         document.addEventListener('DOMContentLoaded', function () {
                             const btncalcul = document.getElementById('calcul');
@@ -188,10 +186,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Verification de hache</h4>
-                    <p class="card-description">
-                        Horizontal form layout
-                    </p>
-                    <form class="forms-sample">
+                    <form id="ver" class="forms-sample">
                         <div class="form-group row">
                             <label for="algorithmV">Sélectionner un algorithme de hachage</label>
                             <select id="algorithmV" name="algorithm1" class="form-control">
@@ -295,6 +290,7 @@
                                     fileName.innerHTML = ''; // Effacez le contenu précédent
                                     showFile.appendChild(h3);
                                 } else {
+                                    showFile.innerHTML = '';
                                     const p = document.createElement('p');
                                     p.innerHTML = "Aucun fichier sélectionné";
                                     p.style.color = 'red';
@@ -314,10 +310,11 @@
                         document.addEventListener('DOMContentLoaded', function () {
                             const algo = document.getElementById('algorithmV');
                             const btnverify = document.getElementById('verify');
-                            const empreintes = document.getElementById('verification');
+                            const empreintes = document.getElementById('hash');
                             const empreinte = document.getElementById('empreinte');
                             let messageV = document.getElementById('messageV').value;
                             let fileV = document.getElementById('fileV').files[0];
+                            let messsage = '';
                             const form = document.getElementById('hashForm');
                             document.getElementById('message2').addEventListener('input', function () {
                                 messages = document.getElementById('message2').value;
@@ -347,10 +344,42 @@
                                             // Réinitialisez le formulaire
                                             form.reset();
                                         });
+                                        var labelElement = document.createElement("label");
+                                        if(data === 'true'){
+                                            labelElement.className = "badge badge-success";
+                                            labelElement.textContent = "Verification reussi";
+                                        }
+                                        else {
+                                            labelElement.className = "badge badge-danger";
+                                            labelElement.textContent = "Verification echoue";
+                                        }
+                                        if(messageOrFileSelectV.value === 'message'){
+                                            messsage =  'Message : ' + document.getElementById('messageV').value;
+
+                                        }
+                                        else  if(messageOrFileSelectV.value === 'file'){
+                                            messsage =  'Fichier : ' + document.getElementById('fileV').files[0].name;
+                                        }
                                         empreintes.innerHTML = "";
-                                        const para = document.createElement('p');
-                                        para.innerHTML = data;
-                                        empreintes.appendChild(para);
+                                        const p = document.createElement('p');
+                                        const p1 = document.createElement('p');
+                                        p.innerText = messsage;
+                                        p1.innerText = 'Hash : '+ document.getElementById('empreinte').value;
+                                        empreintes.appendChild(p);
+                                        empreintes.appendChild(p1);
+                                        empreintes.appendChild(labelElement);
+                                        const buttonElement = document.createElement("button");
+                                        buttonElement.className = 'btn btn-success mr-2'
+                                        buttonElement.textContent = "Reinitialiser";
+                                        buttonElement.addEventListener("click", function() {
+                                            while (empreintes.firstChild) {
+                                                empreintes.removeChild(empreintes.firstChild);
+                                            }
+                                            document.getElementById('ver').reset();
+                                            document.getElementById('show').innerHTML = '';
+                                        });
+                                        empreintes.appendChild(buttonElement);
+                                        messsage = '';
                                     })
                                     .catch(error => {
                                         // console.error('Erreur lors de la requête AJAX :', error);
@@ -363,8 +392,14 @@
             </div>
         </div>
     </div>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Resultat</h4>
+            <div id="hash">
 
-
+            </div>
+        </div>
+    </div>
 </section>
 </body>
 </html>

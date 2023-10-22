@@ -12,7 +12,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Signature de message</h4>
-                    <form id="hashForm" class="forms-sample">
+                    <form th:object="${signature}" id="hashForm" class="forms-sample">
                         <div class="form-group row">
                             <label for="algorithmV2">Sélectionner un algorithme de asymetrique</label>
                             <select id="algorithmV2" name="algorithm12" class="form-control">
@@ -20,49 +20,45 @@
                                 <option th:each="algo : ${algos}" th:value="${algo}"  th:text="${algo}"></option>
                             </select>
                         </div>
-                        <div class="form-group row">
-                            <label for="algorithms">Sélectionner un algorithme de hachage</label>
-                            <select id="algorithms" name="algorithms" class="form-control">
-                                <option value="" selected>Choisiser un algorithme de hachage</option>
-                                <option th:each="algo : ${algos}" th:value="${algo}"  th:text="${algo}"></option>
-                            </select>
-                        </div>
-                        <div class="form-group row" id="divsize" style="display: none">
-                            <label for="size">Taille</label>
+                        <div class="form-group row" id="divsize">
+                            <label for="size">Algorithme de signature</label>
                             <select id="size" name="size" class="form-control">
                             </select>
                         </div>
-                        <script>
-                            alogoSelect = document.getElementById("algorithms");
+                        <div class="form-group row">
+                            <input type="file" id="key" name="key" style="display:none">
+                            <label for="key" class="btn btn-success mr-2">Entrer votre clé privee</label>
+                            <div id="fichier"></div>
+                        </div>
+                        <script th:inline="javascript">
+                        /*<![CDATA[*/
+                            alogoSelect = document.getElementById("algorithmV2");
                             sizeSelect= document.getElementById("size");
-                            const algorithmsWithKeyOptions = new Map();
-                            algorithmsWithKeyOptions.set("SHA-1", [160]);
-                            algorithmsWithKeyOptions.set("SHA-256", [256]);
-                            algorithmsWithKeyOptions.set("SHA-384", [384]);
-                            algorithmsWithKeyOptions.set("SHA-512", [512]);
-                            algorithmsWithKeyOptions.set("SHA-3-256", [256]);
-                            algorithmsWithKeyOptions.set("MD5", [128]);
-                            algorithmsWithKeyOptions.set("Whirlpool", [512]);
-                            algorithmsWithKeyOptions.set("GOST R 34.11-94", [256]);
-                            function getSize() {
+                            const algorithmsWithKeyOptions = /*[[ ${signature.getAllAlgoSignature()} ]]*/; // Remove the extra *
+                        function getSize() {
                                 const selectedAlgo = alogoSelect.value;
                                 sizeSelect.innerHTML = ''; // Clear the current options
-                                if (algorithmsWithKeyOptions.get(selectedAlgo)) {
-                                    algorithmsWithKeyOptions.get(selectedAlgo).forEach(sizeValue => {
+                                if (algorithmsWithKeyOptions[selectedAlgo]) {
+                                    algorithmsWithKeyOptions[selectedAlgo].forEach(sizeValue => {
                                         const option = document.createElement('option');
                                         option.value = sizeValue;
                                         option.textContent = sizeValue;
-                                        sizeSelect.appendChild(option);
+                                        document.getElementById("size").appendChild(option);
                                     });
-                                    document.getElementById("divsize").style.display = 'block';
                                 }
                             }
                             alogoSelect.addEventListener('change',function () {
-                                console.log(alogoSelect.value)
                                 getSize();
                             })
                             getSize();
+                        document.getElementById("key").addEventListener('change',function () {
+                            const p = document.createElement('p');
+                            p.innerHTML =  document.getElementById("key").files[0].name;
+                            document.getElementById("fichier").appendChild(p);
+                        })
+                        /*]]>*/
                         </script>
+
                         <div class="form-group row">
                             <label for="messageOrFile1">Choisir entre un message ou un fichier :</label>
                             <select id="messageOrFile1" class="form-control">
@@ -161,10 +157,12 @@
                             btncalcul.addEventListener('click', function () {
 // Créez un objet contenant à la fois les données et le fichier
                                 const formData = new FormData();
-                                formData.append('algorithme', alogoSelect.value); // Convertissez les données en une chaîne JSON et ajoutez-les
+                                formData.append('algorithme', document.getElementById('algorithmV2').value); // Convertissez les données en une chaîne JSON et ajoutez-les
+                                formData.append('option', document.getElementById('size').value); // Convertissez les données en une chaîne JSON et ajoutez-les
                                 formData.append('message',document.getElementById('message2').value); // Convertissez les données en une chaîne JSON et ajoutez-les
+                                formData.append('key', document.getElementById('key').files[0]); // Convertissez les données en une chaîne JSON et ajoutez-les
                                 formData.append('file',  document.getElementById('file2').files[0]); // Ajoutez le fichier s'il existe
-                                fetch('hash', {
+                                fetch('sign', {
                                     method: 'POST',
                                     body: formData // Utilisez le FormData contenant les données et le fichier
                                 })
@@ -179,7 +177,7 @@
                                         });
                                         const para = document.createElement('p');
                                         para.innerHTML = data;
-                                        empreinte.appendChild(para);
+                                        document.getElementById('result').appendChild(para);
                                     })
                                     .catch(error => {
                                         // console.error('Erreur lors de la requête AJAX :', error);
@@ -195,7 +193,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Verification de signature</h4>
-                    <form class="forms-sample">
+                    <form id="ver" class="forms-sample">
                         <div class="form-group row">
                             <label for="algorithmV1">Sélectionner un algorithme de asymetrique</label>
                             <select id="algorithmV1" name="algorithm11" class="form-control">
@@ -204,46 +202,41 @@
                             </select>
                         </div>
                         <div class="form-group row">
-                            <label for="algorithmV">Sélectionner un algorithme de hachage</label>
-                            <select id="algorithmV" name="algorithm1" class="form-control">
-                                <option value="" selected>Choisiser un algorithme de hachage</option>
-                                <option th:each="algo : ${algos}" th:value="${algo}"  th:text="${algo}"></option>
-                            </select>
+                        <label for="size1">Algorithme de signature</label>
+                        <select id="size1" name="size1" class="form-control">
+                        </select>
+                    </div>
+                        <div class="form-group row">
+                            <input type="file" id="key1" name="key1" style="display:none">
+                            <label for="key1" class="btn btn-success mr-2">Entrer votre clé publique</label>
+                            <div id="fichier1"></div>
                         </div>
-                        <div class="form-group row" id="divsize1" style="display: none">
-                            <label for="size1">Taille</label>
-                            <select id="size1" name="size1" class="form-control">
-                            </select>
-                        </div>
-                        <script>
-                            alogoSelect1 = document.getElementById("algorithm1");
-                            sizeSelect1 = document.getElementById("size1");
-                            const algorithmsWithKeyOptions1 = new Map();
-                            algorithmsWithKeyOptions1.set("SHA-1", [160]);
-                            algorithmsWithKeyOptions1.set("SHA-256", [256]);
-                            algorithmsWithKeyOptions1.set("SHA-384", [384]);
-                            algorithmsWithKeyOptions1.set("SHA-512", [512]);
-                            algorithmsWithKeyOptions1.set("SHA-3-256", [256]);
-                            algorithmsWithKeyOptions1.set("MD5", [128]);
-                            algorithmsWithKeyOptions1.set("Whirlpool", [512]);
-                            algorithmsWithKeyOptions1.set("GOST R 34.11-94", [256]);
-                            function getSize1() {
-                                const selectedAlgo1 = alogoSelect1.value;
-                                sizeSelect1.innerHTML = ''; // Clear the current options
-                                if (algorithmsWithKeyOptions1.get(selectedAlgo1)) {
-                                    algorithmsWithKeyOptions1.get(selectedAlgo1).forEach(sizeValue => {
+                        <script th:inline="javascript">
+                            /*<![CDATA[*/
+                            alogoSelecte = document.getElementById("algorithmV1");
+                            sizeSelecte = document.getElementById("size1");
+                            function getSize() {
+                                const selectedAlgo = alogoSelecte.value;
+                                sizeSelecte.innerHTML = ''; // Clear the current options
+                                if (algorithmsWithKeyOptions[selectedAlgo]) {
+                                    algorithmsWithKeyOptions[selectedAlgo].forEach(sizeValue => {
                                         const option = document.createElement('option');
                                         option.value = sizeValue;
                                         option.textContent = sizeValue;
-                                        sizeSelect1.appendChild(option);
+                                        sizeSelecte.appendChild(option);
                                     });
-                                    document.getElementById("divsize1").style.display = 'block';
                                 }
                             }
-                            alogoSelect1.addEventListener('change',function () {
-                                getSize1();
+                            alogoSelecte.addEventListener('change',function () {
+                                getSize();
                             })
-                            getSize1();
+                            getSize();
+                            document.getElementById("key1").addEventListener('change',function () {
+                                const p = document.createElement('p');
+                                p.innerHTML =  document.getElementById("key1").files[0].name;
+                                document.getElementById("fichier1").appendChild(p);
+                            })
+                            /*]]>*/
                         </script>
                         <div class="form-group row">
                             <label for="messageOrFileV">Choisir entre un message ou un fichier :</label>
@@ -315,18 +308,19 @@
 
                         </script>
                         <div class="form-group row">
-                            <label for="empreinte">Empreinte</label>
-                            <textarea class="form-control" id="empreinte" rows="2"></textarea>
+                            <label for="sign">Empreinte</label>
+                            <textarea class="form-control" id="sign" rows="2"></textarea>
                         </div>
                         <button id="verify" type="button" class="btn btn-success mr-2">Verifier</button>
                     </form>
                     <div id="verification"></div>
                     <script>
                         document.addEventListener('DOMContentLoaded', function () {
-                            const algo = document.getElementById('algorithmV');
+                            const algo = document.getElementById('algorithmV1');
                             const btnverify = document.getElementById('verify');
                             const empreintes = document.getElementById('verification');
-                            const empreinte = document.getElementById('empreinte');
+                            const empreinte = document.getElementById('sign');
+                            let messsage = '';
                             let messageV = document.getElementById('messageV').value;
                             let fileV = document.getElementById('fileV').files[0];
                             const form = document.getElementById('hashForm');
@@ -343,9 +337,11 @@
                                 const formData = new FormData();
                                 formData.append('algorithme', algo.value); // Convertissez les données en une chaîne JSON et ajoutez-les
                                 formData.append('message',document.getElementById('messageV').value); // Convertissez les données en une chaîne JSON et ajoutez-les
-                                formData.append('empreinte',document.getElementById('empreinte').value); // Convertissez les données en une chaîne JSON et ajoutez-les
+                                formData.append('option',document.getElementById('size1').value);
+                                formData.append('key',document.getElementById('key1').files[0]);
+                                formData.append('empreinte',document.getElementById('sign').value); // Convertissez les données en une chaîne JSON et ajoutez-les
                                 formData.append('file',  document.getElementById('fileV').files[0]); // Ajoutez le fichier s'il existe
-                                fetch('hash-verify', {
+                                fetch('sign-verify', {
                                     method: 'POST',
                                     body: formData // Utilisez le FormData contenant les données et le fichier
                                 })
@@ -358,10 +354,43 @@
                                             // Réinitialisez le formulaire
                                             form.reset();
                                         });
-                                        empreintes.innerHTML = "";
-                                        const para = document.createElement('p');
-                                        para.innerHTML = data;
-                                        empreintes.appendChild(para);
+                                        var labelElement = document.createElement("label");
+                                        if(data === 'true'){
+                                            labelElement.className = "badge badge-success";
+                                            labelElement.textContent = "Verification reussi";
+                                        }
+                                        else {
+                                            labelElement.className = "badge badge-danger";
+                                            labelElement.textContent = "Verification echoue";
+                                        }
+                                        if(messageOrFileSelectV.value === 'message'){
+                                            messsage =  'Message : ' + document.getElementById('messageV').value;
+
+                                        }
+                                        else  if(messageOrFileSelectV.value === 'file'){
+                                            messsage =  'Fichier : ' + document.getElementById('fileV').files[0].name;
+                                        }
+                                        document.getElementById('result').innerText = "";
+                                        const p = document.createElement('p');
+                                        const p1 = document.createElement('p');
+                                        p.innerText = messsage;
+                                        p1.innerText = 'Signature : '+ document.getElementById('sign').value;
+                                        document.getElementById('result').appendChild(p);
+                                        document.getElementById('result').appendChild(p1);
+                                        document.getElementById('result').appendChild(labelElement);
+                                        const buttonElement = document.createElement("button");
+                                        buttonElement.className = 'btn btn-success mr-2'
+                                        buttonElement.textContent = "Reinitialiser";
+                                        buttonElement.addEventListener("click", function() {
+                                            while (empreintes.firstChild) {
+                                                empreintes.removeChild(empreintes.firstChild);
+                                            }
+                                            document.getElementById('ver').reset();
+                                            document.getElementById('hashForm').reset();
+                                            document.getElementById('show').innerHTML = '';
+                                            window.location.reload();
+                                        });
+                                        document.getElementById('result').appendChild(buttonElement);
                                     })
                                     .catch(error => {
                                         // console.error('Erreur lors de la requête AJAX :', error);
@@ -375,7 +404,14 @@
         </div>
     </div>
 
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Resultat</h4>
+            <div id="result">
 
+            </div>
+        </div>
+    </div>
 </section>
 </body>
 </html>

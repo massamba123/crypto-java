@@ -57,7 +57,7 @@ public class KeyLoader {
             return pub;
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             // Handle exceptions appropriately, e.g., log or throw a custom exception
-            throw new Exception("Error deserializing public key: " + e.getMessage(), e);
+            return null;
         }
     }
 
