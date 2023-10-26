@@ -13,7 +13,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Chiffrement</h4>
-                    <form th:object="${chiffrement}" th:action="@{encrypt}" method="post" class="form-sample" enctype="multipart/form-data">
+                    <form id="chiffre" th:object="${chiffrement}" th:action="@{encrypt}" method="post" class="form-sample" enctype="multipart/form-data">
                         <div class="form-group row">
                             <label for="algorithm">Sélectionner un algorithme:</label>
                             <select id="algorithm" name="algorithm" class="form-control" th:field="*{algorithme}">
@@ -21,16 +21,10 @@
                             </select>
                         </div>
                         <div class="form-group row">
-                            <!--                        <div>-->
-                            <!--                            <button type="button" id="genererCleButton" class="btn btn-success mr-2">Chercher une clé dans la base de données</button>-->
-                            <!--                        </div>-->
                             <div class="form-group row">
                                 <input type="file" id="import" name="import" style="display:none">
-                                <label for="import" class="btn btn-success mr-2">Importer une clé</label>
+                                <label for="import" class="btn btn-primary mr-2">Importer une clé</label>
                             </div>
-                            <!--                        <div>-->
-                            <!--                            <button type="button" id="genererCle" class="btn btn-success mr-2">Générer une clé de chiffrement</button>-->
-                            <!--                        </div>-->
                         </div>
                         <div class="form-group row" id="kename">
                         </div>
@@ -175,7 +169,7 @@
                         </div>
                         <div id="fileInput" class="form-group row" style="display: none;">
                             <input type="file" id="file" name="file" style="display: none;">
-                            <label for="file" class="btn btn-success mr-2" id="chooseFileButton">Choisir un fichier</label>
+                            <label for="file" class="btn btn-primary mr-2" id="chooseFileButton">Choisir un fichier</label>
                         </div>
                         <div class="form-group row" id="filename">
                         </div>
@@ -279,10 +273,15 @@
                             });
                         </script>
                         <div id="divbtn" class="form-group row">
-                            <button type="submit" id="chiffrer" class="btn btn-success mr-2">
-                                <p>Chiffrer</p>
+                            <button type="submit" id="chiffrer" class="btn btn-primary">
+                                Chiffrer
                             </button>
                         </div>
+                        <script>
+                            document.getElementById("chiffrer").addEventListener("submit",function () {
+                                document.getElementById("chiffre").reset();
+                            })
+                        </script>
                     </form>
                 </div>
             </div>
@@ -291,7 +290,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">Déchiffrement</h4>
-                    <form th:object="${dechiffrement}" th:action="@{decrypt}" method="post" class="form-sample" enctype="multipart/form-data">
+                    <form id="dechiffre" th:object="${dechiffrement}" th:action="@{decrypt}" method="post" class="form-sample" enctype="multipart/form-data">
                         <div class="form-group row">
                             <label for="algorithm">Sélectionner un algorithme:</label>
                             <select id="algorithm1" name="algorithm1" class="form-control" th:field="*{algorithme}">
@@ -304,7 +303,7 @@
                             <!--                        </div>-->
                             <div class="form-group row">
                                 <input type="file" id="import1" name="import1" style="display:none">
-                                <label for="import1" class="btn btn-success mr-2">Importer une clé</label>
+                                <label for="import1" class="btn btn-primary mr-2">Importer une clé</label>
                             </div>
                         </div>
                         <div class="form-group row" id="kename1">
@@ -441,13 +440,13 @@
                         </div>
                         <div id="fileInput1" class="form-group row" style="display: none;">
                             <input type="file" id="file1" name="file1" style="display: none;">
-                            <label for="file1" class="btn btn-success mr-2" id="chooseFileButton1">Choisir un fichier</label>
+                            <label for="file1" class="btn btn-primary mr-2" id="chooseFileButton1">Choisir un fichier</label>
                         </div>
                         <div class="form-group row" id="filename1">
                         </div>
                         <div id="divbtn1" class="form-group row">
-                            <button type="submit" id="dechiffrer" class="btn btn-success mr-2">
-                                <p>Dechiffrer</p>
+                            <button type="submit" id="dechiffrer" class="btn btn-primary">
+                                Dechiffrer
                             </button>
                         </div>
 <!--                        <script>-->
@@ -564,6 +563,11 @@
                             });
                         </script>
                     </form>
+                    <script>
+                        document.getElementById("dechiffrer").addEventListener("submit",function () {
+                            document.getElementById("dechiffre").reset();
+                        })
+                    </script>
                 </div>
             </div>
         </div>

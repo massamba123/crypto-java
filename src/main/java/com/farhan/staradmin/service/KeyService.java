@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 
@@ -78,9 +80,13 @@ public class KeyService {
             AsymetriqueKeyGen.saveKey(publicKey,path+key.getPath()+".pub");
             AsymetriqueKeyGen.saveKey(privateKey,path+key.getPath()+".priv");
             key.setPath(path+name);
+            key.setLocalDate(LocalDate.now());
             keyRepository.save(key);
             return null;
         }
+    }
+    public List<Key> getKeyByUser(int id){
+        return keyRepository.findByUserId(id);
     }
 
     public void deleteKey(int id) {

@@ -5,6 +5,7 @@ import com.farhan.staradmin.repository.AlgorithmeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,6 +23,24 @@ public class AlgorithmeService {
             return  null;
         }
         return algorithmeRepository.findAll();
+    }
+    public List<Algorithme> getAllAlgoCipher(){
+        List<Algorithme> algorithmes = new ArrayList<>();
+        getAllAlgorithmes().forEach(algorithme -> {
+            if (algorithme.getType().equals("asymetrique") || algorithme.getType().equals("symetrique")){
+                algorithmes.add(algorithme);
+            }
+        });
+        return algorithmes;
+    }
+    public List<Algorithme> getAllAlgoSignature(){
+        List<Algorithme> algorithmes = new ArrayList<>();
+        getAllAlgorithmes().forEach(algorithme -> {
+            if (algorithme.getType().equals("signature")){
+                algorithmes.add(algorithme);
+            }
+        });
+        return algorithmes;
     }
     public Algorithme getTypeAlgo(String algo){
         Algorithme algorithme = algorithmeRepository.findByName(algo);

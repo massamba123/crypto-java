@@ -1,10 +1,232 @@
 <!DOCTYPE html>
-<html lang="en">
+<html layout:decorate="~{layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+  <title>Documentation de l'Application de Cryptographie</title>    <style>
+  /* Increase the font size for specific elements */
+  .card-title {
+    font-size: 24px; /* Adjust the size as needed */
+  }
+
+  .card-description {
+    font-size: 18px; /* Adjust the size as needed */
+  }
+  p,li {
+    font-size: 15px;
+    font-family: Arial, sans-serif; /* Spécifiez la police souhaitée ici */
+  }
+  /* Increase the font size for form labels */
+  .col-form-label {
+    font-size: 16px; /* Adjust the size as needed */
+  }
+
+  /* Increase the font size for form controls */
+  .form-control {
+    font-size: 16px; /* Adjust the size as needed */
+  }
+</style>
 </head>
 <body>
-$END$
+<section layout:fragment="content">
+  <div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <h1>Documentation de l'Application de Cryptographie</h1>
+          <p>Bienvenue dans la documentation de notre application de cryptographie ! Cette application vous offre un ensemble d'outils puissants pour sécuriser et gérer vos données sensibles. Vous pouvez effectuer diverses opérations, notamment le chiffrement, le déchiffrement, le hachage, la signature et la gestion de clés. Cette documentation vous guidera à travers les fonctionnalités de l'application et vous expliquera comment les utiliser de manière efficace.</p>
+          <h3>Fonctionnalités Principales :</h3>
+          <ul>
+            <li><strong>Chiffrement et Déchiffrement :</strong> Protégez vos données en chiffrant des messages ou des fichiers, puis déchiffrez-les lorsque vous en avez besoin.</li>
+            <li><strong>Hachage :</strong> Créez des empreintes numériques uniques de vos données pour garantir leur intégrité.</li>
+            <li><strong>Signature :</strong> Apposez des signatures numériques pour vérifier l'authenticité de vos documents.</li>
+            <li><strong>Gestion d'Algorithmes :</strong> Choisissez parmi une variété d'algorithmes pour personnaliser votre sécurité.</li>
+            <li><strong>Génération de Clés :</strong> Générez des clés sécurisées pour vos opérations de chiffrement et de signature.</li>
+            <li><strong>Gestion de Fichiers :</strong> Stockez et gérez vos clés en toute sécurité pour des opérations ultérieures.</li>
+          </ul>
+          <p>Cette documentation vous fournira des instructions détaillées sur la manière d'utiliser chaque fonctionnalité de l'application. Suivez les guides étape par étape pour tirer le meilleur parti de ces outils de cryptographie. Sécurisez vos données et assurez-vous de leur authenticité grâce à notre application de cryptographie.</p>
+          <p>Nous vous souhaitons une expérience sécurisée et productive avec notre application !</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <!-- Collapsible Header -->
+          <a data-toggle="collapse" href="#algorithme" aria-expanded="false">
+            <h4 class="card-title">Algorithme et Generation de cle</h4>
+          </a>
+          <div class="table-responsive collapse" id="algorithme">
+            <h5>Gestion d'Algorithmes</h5>
+            <ol>
+              <li>Choisissez le type d'algorithme que vous souhaitez utiliser parmi les options : symétrique, asymétrique, signature, clé partagée.</li>
+              <li>Choisissez un algorithme cryptographique parmi ceux disponibles.</li>
+              <li>Cliquez sur "Ajouter l'algorithme". L'algorithme sera ajouté à la liste des algorithmes disponibles pour l'utilisateur connecté.</li>
+            </ol>
+
+            <h5>Génération de Clé</h5>
+            <ol>
+              <li>Choisissez un algorithme dans la liste des algorithmes disponibles pour l'utilisateur connecté.</li>
+              <li>Choisissez la taille de la clé.</li>
+              <li>Ensuite, si vous cochez la case "Voulez-vous sauvegarder la clé":</li>
+              <ul>
+                <li>Si oui, un champ d'entrée s'affichera pour que vous puissiez entrer le nom du fichier. Ce fichier sera sauvegardé dans la base de données et vous pourrez l'utiliser ultérieurement.</li>
+                <li>Si non, le fichier de clé sera téléchargé :</li>
+                <ul>
+                  <li>Si le type d'algorithme est symétrique, la clé générée sera un seul fichier avec comme nom "date_cle_secrete.sk".</li>
+                  <li>Si le type d'algorithme est asymétrique ou signature, le fichier téléchargé sera un fichier ZIP contenant la clé publique et la clé privée avec comme nom "date_cle_publique_prive.zip".</li>
+                </ul>
+              </ul>
+              <li>Enfin, si vous cliquez sur "Générer", le fichier de clé sera téléchargé.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <!-- Collapsible Header -->
+          <a data-toggle="collapse" href="#fichier" aria-expanded="false">
+            <h4 class="card-title">Gestion de fichier</h4>
+          </a>
+          <div class="table-responsive collapse" id="fichier">
+            <p>
+              Vous pouvez gérer les fichiers et les clés enregistrées dans votre application. La liste des clés enregistrées par l'utilisateur sera affichée comme suit :
+              <strong>ID, Type d'Algorithme, Nom de l'Algorithme, Action</strong>.
+            </p>
+            <p>
+              Dans la colonne "Action", l'utilisateur peut effectuer les opérations suivantes :
+            </p>
+            <ul>
+              <li>Télécharger le fichier de clé.</li>
+              <li>Utiliser le fichier de clé pour effectuer des opérations de chiffrement, déchiffrement, signature et vérification.</li>
+            </ul>
+            <p>
+              Les fichiers de clé enregistrés par l'utilisateur sont essentiels pour effectuer ces opérations en toute sécurité.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <!-- Collapsible Header -->
+          <a data-toggle="collapse" href="#chiffrement" aria-expanded="false">
+            <h4 class="card-title">Chiffrement et Dechiffrement</h4>
+          </a>
+          <div class="table-responsive collapse" id="chiffrement">
+            <p>
+              L'application de chiffrement offre les fonctionnalités suivantes :
+            </p>
+            <ul>
+              <li>Chiffrer des données</li>
+              <li>Déchiffrer des données</li>
+            </ul>
+            <p>
+              Pour le chiffrement :
+            </p>
+            <ol>
+              <li>Sélectionnez le type d'algorithme de chiffrement. Par exemple, AES.</li>
+              <li>Entrez une clé de chiffrement symétrique (la clé doit être obligatoirement une clé symétrique, sinon une erreur se produira et vous serez redirigé vers une autre page).</li>
+              <li>Saisissez les données à chiffrer. Vous pouvez soit entrer un message, soit importer un fichier.</li>
+              <li>Enfin, cliquez sur "Chiffrer" pour obtenir le résultat chiffré.</li>
+            </ol>
+
+            <p>
+              Pour le dechiffrement :
+            </p>
+            <ol>
+              <li>Sélectionnez le type d'algorithme de chiffrement. Par exemple, AES.</li>
+              <li>Entrez une clé de symétrique (la clé doit être obligatoirement une clé symétrique, sinon une erreur se produira et vous serez redirigé vers une autre page).</li>
+              <li>Saisissez les données à chiffrer.Importer un fichier : la cle symetrique.</li>
+              <li>Enfin, cliquez sur "Dechiffrer" pour obtenir le texte dechiffre.</li>
+            </ol>
+            <p>
+              Assurez-vous de conserver vos clés de chiffrement en sécurité.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <!-- Collapsible Header -->
+          <a data-toggle="collapse" href="#hachage" aria-expanded="false">
+            <h4 class="card-title">Hachage</h4>
+          </a>
+          <div class="table-responsive collapse" id="hachage">
+            <p>
+              La fonction de hachage est utilisée pour créer une empreinte numérique unique d'une donnée, que ce soit un message ou un fichier. Vous pouvez également vérifier l'authenticité d'une donnée en comparant son empreinte avec une empreinte préalablement calculée.
+            </p>
+            <h5>Création d'un Hachage</h5>
+            <ol>
+              <li>Sélectionnez l'algorithme de hachage que vous souhaitez utiliser, par exemple, SHA-256.</li>
+              <li>Entrez le texte ou le fichier que vous souhaitez hacher.</li>
+              <li>Cliquez sur "Hacher" pour obtenir l'empreinte numérique.</li>
+            </ol>
+            <p>
+              Assurez-vous de noter l'algorithme de hachage utilisé et l'empreinte générée, car vous en aurez besoin pour vérifier le hachage plus tard.
+            </p>
+
+            <h5>Vérification du Hachage</h5>
+            <ol>
+              <li>Sélectionnez le même algorithme de hachage utilisé précédemment, par exemple, SHA-256.</li>
+              <li>Entrez le texte ou le fichier que vous souhaitez vérifier.</li>
+              <li>Entrez l'empreinte numérique précédemment calculée.</li>
+              <li>Cliquez sur "Vérifier Hachage".</li>
+            </ol>
+            <p>
+              L'application comparera l'empreinte numérique de la donnée avec l'empreinte précédemment calculée. Si elles correspondent, la donnée est authentique.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <!-- Collapsible Header -->
+          <a data-toggle="collapse" href="#signature" aria-expanded="false">
+            <h4 class="card-title">Signature</h4>
+          </a>
+          <div class="table-responsive collapse" id="signature">
+            <p>
+              La signature numérique permet de vérifier l'authenticité d'un document en utilisant un algorithme asymétrique. Vous pouvez créer une signature numérique pour un message ou un fichier, puis vérifier la signature pour vous assurer qu'elle n'a pas été altérée.
+            </p>
+            <h5>Création d'une Signature</h5>
+            <ol>
+              <li>Sélectionnez l'algorithme asymétrique que vous souhaitez utiliser, par exemple, RSA.</li>
+              <li>Sélectionnez l'algorithme de signature correspondant, par exemple, RSA-SHA256.</li>
+              <li>Entrez votre clé privée correspondant à l'algorithme asymétrique choisi.</li>
+              <li>Entrez le texte ou le fichier que vous souhaitez signer.</li>
+              <li>Cliquez sur "Signer" pour créer la signature numérique.</li>
+            </ol>
+            <p>
+              La signature sera générée pour le message ou le fichier, assurez-vous de conserver votre clé privée en sécurité.
+            </p>
+
+            <h5>Vérification de la Signature</h5>
+            <ol>
+              <li>Sélectionnez le même algorithme asymétrique que celui utilisé pour la signature, par exemple, RSA.</li>
+              <li>Sélectionnez le même algorithme de signature correspondant, par exemple, RSA-SHA256.</li>
+              <li>Entrez votre clé publique correspondant à l'algorithme asymétrique choisi.</li>
+              <li>Entrez le texte ou le fichier que vous souhaitez vérifier.</li>
+              <li>Entrez la signature précédemment calculée.</li>
+              <li>Cliquez sur "Vérifier" pour vérifier la signature numérique.</li>
+            </ol>
+            <p>
+              L'application comparera la signature numérique de la donnée avec la signature précédemment calculée. Si elles correspondent, la donnée est authentique et n'a pas été altérée.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</section>
 </body>
 </html>

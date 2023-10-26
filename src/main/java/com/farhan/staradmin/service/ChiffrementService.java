@@ -22,29 +22,12 @@ public class ChiffrementService {
     public byte[] createChiffrement(Chiffrement chiffrement, byte[] file, String filename, Key sk) throws Exception{
         String directoryKeys = "src/main/resources/cipher/";
         chiffrement.setFileInPath(directoryKeys+chiffrement.getId()+"-"+filename);
-//        SecretKey sk = SecretKeyImpl.getKey(chiffrement.getKeyPath());
         Cipher cipher = Cipher.getInstance(chiffrement.getAlgorithme(),"BC");
         if (chiffrement.getMode().equals("Chiffrement")){
             cipher.init(Cipher.ENCRYPT_MODE,sk);
-//            if (sk.getFormat().equalsIgnoreCase("X.509")){
-//                PublicKey pub = KeyLoader.deserializePublicKey(sk.getEncoded(),chiffrement.getAlgorithme());
-//                cipher.init(Cipher.ENCRYPT_MODE,pub);
-//            }else {
-//                SecretKey secretKey = SecretKeyImpl.getKeyFromBytes(sk.getEncoded(), chiffrement.getAlgorithme());
-//                cipher.init(Cipher.ENCRYPT_MODE,secretKey);
-//            }
         }
         else  if (chiffrement.getMode().equals("Dechiffrement")) {
-            System.out.println("dfffffffffffffffffffffff" + Utils.toHex(file));
             cipher.init(Cipher.DECRYPT_MODE,sk);
-//            if (sk.getFormat().equalsIgnoreCase("PKCS#8")) {
-//                PrivateKey priv = KeyLoader.deserializePrivateKey(sk.getEncoded(), chiffrement.getAlgorithme());
-//                cipher.init(Cipher.DECRYPT_MODE, priv);
-//            }
-//            else {
-//                SecretKey secretKey = SecretKeyImpl.getKeyFromBytes(sk.getEncoded(), chiffrement.getAlgorithme());
-//                cipher.init(Cipher.DECRYPT_MODE,secretKey);
-//            }
         }
         byte[] out = cipher.doFinal(file);
         System.out.println(Utils.toHex(out));

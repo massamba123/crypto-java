@@ -1,6 +1,7 @@
 package com.farhan.staradmin.controller;
 
 import com.farhan.staradmin.entity.Signature;
+import com.farhan.staradmin.service.AlgorithmeService;
 import com.farhan.staradmin.service.SignatureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +25,14 @@ import java.util.*;
 public class SignatureController {
     @Autowired
     private SignatureService signatureService;
+    @Autowired
+    private AlgorithmeService algorithmeService;
     @GetMapping(value = "signature")
     public ModelMap mmHachage() {
         List<String> haches = Arrays.asList("SHA-1","SHA-256","SHA-384","SHA-512","SHA-3-256","MD5","Whirlpool","GOST R 34.11-94");
         ModelMap modelMap = new ModelMap();
         Signature signature = new Signature();
-        modelMap.addAttribute("algos",signature.getAlgoSignature());
+        modelMap.addAttribute("algos",algorithmeService.getAllAlgoSignature());
         modelMap.addAttribute("algoOptions",signature.getAlgoSignature());
         modelMap.addAttribute("signature",signature);
 

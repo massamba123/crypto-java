@@ -1,6 +1,11 @@
 package com.farhan.staradmin.entity;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class User {
@@ -15,6 +20,8 @@ public class User {
     private String roles;
     private String permissions;
     private String selectedOption;
+    @OneToMany(mappedBy = "user")
+    private List<Key> keys;
 
 
     public User(String first_name, String last_name, String username, String password, String roles) {
@@ -24,9 +31,23 @@ public class User {
         this.password = password;
         this.roles = roles;
     }
-
+    public User(String first_name, String last_name, String username, String password) {
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+    }
     public User() {
 
+    }
+
+    public List<Key> getKeys() {
+        return keys;
+    }
+
+    public void setKeys(List<Key> keys) {
+        this.keys = keys;
     }
 
     public String getSelectedOption() {

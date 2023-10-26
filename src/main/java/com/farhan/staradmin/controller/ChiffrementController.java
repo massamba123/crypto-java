@@ -1,10 +1,7 @@
 package com.farhan.staradmin.controller;
 
 import com.farhan.staradmin.crypto.symetrique.SecretKeyImpl;
-import com.farhan.staradmin.entity.Algorithme;
-import com.farhan.staradmin.entity.Chiffrement;
-import com.farhan.staradmin.entity.Key;
-import com.farhan.staradmin.entity.User;
+import com.farhan.staradmin.entity.*;
 import com.farhan.staradmin.service.AlgorithmeService;
 import com.farhan.staradmin.service.ChiffrementService;
 import com.farhan.staradmin.service.ChiffrementUtil;
@@ -25,8 +22,8 @@ import utils.KeyLoader;
 import utils.Utils;
 
 import javax.crypto.SecretKey;
+import java.time.LocalDate;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,21 +38,6 @@ public class ChiffrementController {
     private ChiffrementService chiffrementService;
     @Autowired
     private KeyService keyService;
-    @GetMapping("symetrique")
-    public ModelMap mmSymetrique() {
-        ModelMap modelMap = new ModelMap();
-        List<Algorithme> algorithmes = algorithmeService.getAllAlgorithmes();
-        Chiffrement chiffrement = new Chiffrement();
-        chiffrement.setType("symetrique");
-        chiffrement.setMode("Chiffrement");
-        Chiffrement dechiffrement = new Chiffrement();
-        dechiffrement.setType("asymetrique");
-        dechiffrement.setMode("Dechiffrement");
-        modelMap.addAttribute("chiffrement", chiffrement); // 'user' is the attribute name
-        modelMap.addAttribute("dechiffrement", dechiffrement); // 'user' is the attribute name
-        modelMap.addAttribute("algorithmes", algorithmes); // 'user' is the attribute name
-        return modelMap;
-    }
     @PostMapping("getkeys")
     @ResponseBody // Cette annotation indique que le résultat doit être converti en JSON
     public List<Key> genererCle(@RequestBody Map<String, String> params) {
@@ -104,6 +86,34 @@ public class ChiffrementController {
         modelMap.addAttribute("user", new User()); // 'user' is the attribute name
         return modelMap;
     }
+    @GetMapping("symetrique")
+    public String mmSymetrique(ModelMap model) {
+        // If the user is authenticated, proceed with the logic.
+        List<Algorithme> algorithmes = algorithmeService.getAllAlgoCipher();
+        Chiffrement chiffrement = new Chiffrement();
+        chiffrement.setType("symetrique");
+        chiffrement.setMode("Chiffrement");
+        Chiffrement dechiffrement = new Chiffrement();
+        dechiffrement.setType("asymetrique");
+        dechiffrement.setMode("Dechiffrement");
+        model.addAttribute("chiffrement", chiffrement);
+        model.addAttribute("dechiffrement", dechiffrement);
+        model.addAttribute("algorithmes", algorithmes);
+        return "pages/symetrique";
+    }
+//    @GetMapping("dechiffrement")
+//    public String mmDechiffrement(ModelMap model) {
+//        // If the user is authenticated, proceed with the logic.
+//        List<Algorithme> algorithmes = algorithmeService.getAllAlgorithmes();
+//        Chiffrement chiffrement = new Chiffrement();
+//        chiffrement.setType("symetrique");
+//        Chiffrement dechiffrement = new Chiffrement();
+//        dechiffrement.setType("asymetrique");
+//        dechiffrement.setMode("Dechiffrement");
+//        model.addAttribute("dechiffrement", dechiffrement);
+//        model.addAttribute("algorithmes", algorithmes);
+//        return "pages/dechiffrement";
+//    }
     @PostMapping("/encrypt")
     public ResponseEntity<Resource> generateKey(@ModelAttribute("chiffrement") Chiffrement chiffrement,
                                                 @RequestParam("file") MultipartFile file,
@@ -121,28 +131,11 @@ public class ChiffrementController {
             String provider = algorithm.getProvider();
             chiffrement.setType(type);
             if (type.equals("symetrique")){
-                sk = SecretKeyImpl.getKeyFromBytes(key.getBytes(), chiffrement.getAlgorithme());
+                    sk = SecretKeyImpl.getKeyFromBytes(key.getBytes(), chiffrement.getAlgorithme());
             }
             else if (type.equals("asymetrique")){
                 sk = KeyLoader.deserializePublicKey(key.getBytes(), chiffrement.getAlgorithme());
             }
-
-//            if (chiffrement.getMode().equals("Chiffrement")){
-//                if (type.equals("symetrique")){
-//                    sk = SecretKeyImpl.getKeyFromBytes(key.getBytes(), chiffrement.getAlgorithme());
-//                }
-//                else if (type.equals("asymetrique")){
-//                    sk = KeyLoader.deserializePublicKey(key.getBytes(), chiffrement.getAlgorithme());
-//                }
-//            }
-//            else if (chiffrement.getMode().equals("Dechiffrement")){
-//                if (type.equals("symetrique")){
-//                    sk = SecretKeyImpl.getKeyFromBytes(key.getBytes(), chiffrement.getAlgorithme());
-//                }
-//                else if (type.equals("asymetrique")){
-//                    sk = KeyLoader.deserializePrivateKey(key.getBytes(), chiffrement.getAlgorithme());
-//                }
-//            }
             if (chiffrement.getKeyPath() != null) {
                 sk = SecretKeyImpl.getKey(chiffrement.getKeyPath());
             }
@@ -166,7 +159,7 @@ public class ChiffrementController {
 
         // Set the headers for the response
         HttpHeaders headers = new HttpHeaders();
-        String fileout = "cipher-"+file.getOriginalFilename();
+        String fileout = "fichier-crypte.txt";
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+fileout);
 
         // Build the ResponseEntity with the ByteArrayResource and headers
@@ -178,10 +171,10 @@ public class ChiffrementController {
     }
     @PostMapping("/decrypt")
     public ResponseEntity<Resource> generateKeyde(@ModelAttribute("dechiffrement") Chiffrement chiffrement,
-                                                @RequestParam("file1") MultipartFile file,
-                                                @RequestParam("import1") MultipartFile key,
-                                                BindingResult bindingResult,
-                                                Model model) throws Exception {
+                                                  @RequestParam("file1") MultipartFile file,
+                                                  @RequestParam("import1") MultipartFile key,
+                                                  BindingResult bindingResult,
+                                                  Model model) throws Exception {
 
         byte[] out = new byte[0];
         System.out.println("cle"+Utils.toHex(key.getBytes()));
@@ -196,28 +189,10 @@ public class ChiffrementController {
             System.out.println("cle type"+type);
             if (type.equals("symetrique")){
                 sk = SecretKeyImpl.getKeyFromBytes(key.getBytes(), chiffrement.getAlgorithme());
-                System.out.println("cle"+Utils.toHex(sk.getEncoded()));
             }
             else if (type.equals("asymetrique")){
-                    sk = KeyLoader.deserializePrivateKey(key.getBytes(), chiffrement.getAlgorithme());
+                sk = KeyLoader.deserializePrivateKey(key.getBytes(), chiffrement.getAlgorithme());
             }
-
-//            if (chiffrement.getMode().equals("Chiffrement")){
-//                if (type.equals("symetrique")){
-//                    sk = SecretKeyImpl.getKeyFromBytes(key.getBytes(), chiffrement.getAlgorithme());
-//                }
-//                else if (type.equals("asymetrique")){
-//                    sk = KeyLoader.deserializePublicKey(key.getBytes(), chiffrement.getAlgorithme());
-//                }
-//            }
-//            else if (chiffrement.getMode().equals("Dechiffrement")){
-//                if (type.equals("symetrique")){
-//                    sk = SecretKeyImpl.getKeyFromBytes(key.getBytes(), chiffrement.getAlgorithme());
-//                }
-//                else if (type.equals("asymetrique")){
-//                    sk = KeyLoader.deserializePrivateKey(key.getBytes(), chiffrement.getAlgorithme());
-//                }
-//            }
             if (chiffrement.getKeyPath() != null) {
                 sk = SecretKeyImpl.getKey(chiffrement.getKeyPath());
             }
@@ -229,7 +204,7 @@ public class ChiffrementController {
                 out  = chiffrementService.createChiffrement(chiffrement,fileBytes,fileName,sk);
             } else if (chiffrement.getMessage() != null && file.isEmpty()) {
                 fileBytes = chiffrement.getMessage().getBytes();
-                String filenames  = "cipher";
+                String filenames  =  LocalDate.now().toString() +"_chiffre.txt";
                 out  = chiffrementService.createChiffrement(chiffrement,fileBytes,filenames,sk);
             }
             // Save the file or perform any necessary operations
@@ -241,15 +216,37 @@ public class ChiffrementController {
 
         // Set the headers for the response
         HttpHeaders headers = new HttpHeaders();
-        String fileout = "cipher-"+file.getOriginalFilename();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+fileout);
+        if (isPDF(out)) {
+            String fileout = LocalDate.now().toString() + "_dechiffre.pdf";
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileout);
+            // Construisez la ResponseEntity avec ByteArrayResource et les en-têtes
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentLength(out.length)
+                    .contentType(MediaType.APPLICATION_PDF) // Utilisez MediaType.APPLICATION_PDF pour un fichier PDF.
+                    .body(resource);
+        } else {
+            String fileout = LocalDate.now().toString() + "_dechiffre.txt";
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileout);
+            // Construisez la ResponseEntity avec ByteArrayResource et les en-têtes
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentLength(out.length)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM) // Utilisez MediaType.APPLICATION_OCTET_STREAM pour un fichier texte.
+                    .body(resource);
+        }
+    }
+    public static boolean isPDF(byte[] data) {
+        if (data.length < 5) {
+            return false; // Un fichier PDF doit avoir au moins 5 octets pour commencer par "%PDF".
+        }
 
-        // Build the ResponseEntity with the ByteArrayResource and headers
-        return ResponseEntity.ok()
-                .headers(headers)
-                .contentLength(out.length)
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(resource);
+        // Vérifie si les premiers 5 octets commencent par "%PDF" suivi d'un numéro de version.
+        if (data[0] == '%' && data[1] == 'P' && data[2] == 'D' && data[3] == 'F' && data[4] == '-') {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

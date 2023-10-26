@@ -2,6 +2,8 @@ package com.farhan.staradmin.entity;
 
 import javax.persistence.*;
 import java.lang.reflect.Array;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -13,12 +15,32 @@ public class Key {
 
     @Column(name = "name")
     private String name;
+    private LocalDate localDate;
     private String type;
     @Transient
     private boolean save;
+    @ManyToOne
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public boolean isSave() {
         return save;
+    }
+
+
+    public LocalDate getLocalDate() {
+        return localDate;
+    }
+
+    public void setLocalDate(LocalDate localDate) {
+        this.localDate = localDate;
     }
 
     public void setSave(boolean save) {

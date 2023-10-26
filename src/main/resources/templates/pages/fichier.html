@@ -1,10 +1,122 @@
 <!DOCTYPE html>
-<html lang="en">
+<html layout:decorate="~{layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+  <title>Home</title>
+  <style>
+    /* Increase the font size for specific elements */
+    .card-title {
+      font-size: 24px; /* Adjust the size as needed */
+    }
+
+    .card-description {
+      font-size: 18px; /* Adjust the size as needed */
+    }
+
+    /* Increase the font size for form labels */
+    .col-form-label {
+      font-size: 16px; /* Adjust the size as needed */
+    }
+
+    /* Increase the font size for form controls */
+    .form-control {
+      font-size: 16px; /* Adjust the size as needed */
+    }
+  </style>
 </head>
 <body>
-$END$
+<section layout:fragment="content">
+  <div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <!-- Collapsible Header -->
+          <a data-toggle="collapse" href="#algorithmTable" aria-expanded="false">
+            <h4 class="card-title">Liste des algorithmes disponible</h4>
+          </a>
+          <div class="table-responsive collapse" id="algorithmTable">
+            <table class="table table-bordered">
+              <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Provider</th>
+                <th>Padding</th>
+              </tr>
+              </thead>
+              <tbody>
+              <!-- Loop through your algorithm data here -->
+              <th:block th:each="algorithm, algorithmIndex : ${algorithmes}">
+                <tr>
+                  <td th:text="${algorithmIndex.index + 1}"></td>
+                  <td th:text="${algorithm.name}"></td>
+                  <td th:text="${algorithm.provider}"></td>
+                  <td th:text="${algorithm.padding}"></td>
+                </tr>
+              </th:block>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <!-- Collapsible Header -->
+          <a data-toggle="collapse" href="#keyTable" aria-expanded="false">
+            <h4 class="card-title">Liste des cles sauvegardes</h4>
+          </a>
+          <div class="table-responsive collapse" id="keyTable">
+            <table class="table table-bordered">
+              <thead>
+              <tr>
+                <th>nom algorithme</th>
+                <th>type</th>
+                <th>taille</th>
+                <th>Date de sauvegarde</th>
+                <th>Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+              <!-- Loop through your algorithm data here -->
+              <th:block th:each="key, keyIndex : ${keys}">
+                <tr>
+                  <td th:text="${key.name}"></td>
+                  <td th:text="${key.type}"></td>
+                  <td th:text="${key.size}"></td>
+                  <td th:text="${key.localDate}"></td>
+                  <td>
+                    <!-- Add action buttons or links as needed -->
+                    <div class="row">
+                      <div class="col-6">
+                        <form class="btn btn-primary" th:action="@{download}" id="telechargementForm" method="post">
+                          <input type="hidden" id="path" name="path" th:value="${key.path}">
+                          <input type="hidden" id="algo" name="algo" th:value="${key.name}">
+                          <input type="hidden" id="paramField" name="type" th:value="${key.type}">
+                          <button class="btn btn-primary" type="submit">Telecharger</button>
+                        </form>
+                      </div>
+                      <div class="col-6">
+                        <form class="btn btn-primary" th:action="@{delete}" id="supprimer" method="post">
+                          <input type="hidden" name="id" th:value="${key.id}">
+                          <button class="btn btn-primary" type="submit">Supprimer</button>
+                        </form>
+                      </div>
+                    </div>
+
+                  </td>
+                </tr>
+              </th:block>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</section>
 </body>
 </html>

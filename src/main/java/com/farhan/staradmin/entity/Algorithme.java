@@ -37,14 +37,16 @@ public class Algorithme {
     public Algorithme() {
     }
     public List<String> getTypes(){
-        return Arrays.asList("symetrique","asymetrique","partage cle");
+        return Arrays.asList("symetrique","asymetrique","signature","partage cle");
     }
     public  List<String> getAlgoTypes(){
         switch (this.getType()) {
             case "symetrique":
                 return Arrays.asList("AES", "DES");
             case "asymetrique":
-                return Arrays.asList("RSA", "ECDSA");
+                return List.of("RSA");
+            case "signature":
+                return Arrays.asList("RSA","DSA","ECDSA","EdDSA");
             case "partage cle":
                 return Collections.singletonList("Diffie-Hellman");
         }

@@ -3,6 +3,7 @@ package com.farhan.staradmin.service;
 import com.farhan.staradmin.entity.User;
 import com.farhan.staradmin.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,12 +17,13 @@ public class UserService {
     }
     public User login(String username,String password){
         User user = this.userRepository.findByUsername(username).orElse(null);
-        if (null != user && user.getPassword().equals(password)){
+        if (null != user && new BCryptPasswordEncoder().matches(password,user.getPassword())){
             return user;
         }
         return null;
     }
     public void createUser(User user){
+        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         this.userRepository.save(user);
     }
     public List<User> getAllUser(){

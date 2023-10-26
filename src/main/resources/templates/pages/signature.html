@@ -17,7 +17,7 @@
                             <label for="algorithmV2">Sélectionner un algorithme de asymetrique</label>
                             <select id="algorithmV2" name="algorithm12" class="form-control">
                                 <option value="" selected>Choisiser un algorithme</option>
-                                <option th:each="algo : ${algos}" th:value="${algo}"  th:text="${algo}"></option>
+                                <option th:each="algo : ${algos}" th:value="${algo.name}"  th:text="${algo.name}"></option>
                             </select>
                         </div>
                         <div class="form-group row" id="divsize">
@@ -27,7 +27,7 @@
                         </div>
                         <div class="form-group row">
                             <input type="file" id="key" name="key" style="display:none">
-                            <label for="key" class="btn btn-success mr-2">Entrer votre clé privee</label>
+                            <label for="key" class="btn btn-primary mr-2">Entrer votre clé privee</label>
                             <div id="fichier"></div>
                         </div>
                         <script th:inline="javascript">
@@ -37,7 +37,7 @@
                             const algorithmsWithKeyOptions = /*[[ ${signature.getAllAlgoSignature()} ]]*/; // Remove the extra *
                         function getSize() {
                                 const selectedAlgo = alogoSelect.value;
-                                sizeSelect.innerHTML = ''; // Clear the current options
+                            sizeSelect.innerHTML = ''; // Clear the current options
                                 if (algorithmsWithKeyOptions[selectedAlgo]) {
                                     algorithmsWithKeyOptions[selectedAlgo].forEach(sizeValue => {
                                         const option = document.createElement('option');
@@ -47,9 +47,7 @@
                                     });
                                 }
                             }
-                            alogoSelect.addEventListener('change',function () {
-                                getSize();
-                            })
+                            alogoSelect.addEventListener('change', getSize);
                             getSize();
                         document.getElementById("key").addEventListener('change',function () {
                             const p = document.createElement('p');
@@ -73,7 +71,7 @@
                         </div>
                         <div id="fileInput2" class="form-group row" style="display: none;">
                             <input type="file" id="file2" name="file2" style="display: none;">
-                            <label for="file2" class="btn btn-success mr-2" id="chooseFileButton1">Choisir un fichier</label>
+                            <label for="file2" class="btn btn-primary mr-2" id="chooseFileButton1">Choisir un fichier</label>
                         </div>
                         <div class="form-group row" id="fileName">
                         </div>
@@ -134,7 +132,7 @@
                             })
 
                         </script>
-                        <button id="calcul" type="button" class="btn btn-success mr-2">Calculer l'empreinte</button>
+                        <button id="calcul" type="button" class="btn btn-primary mr-2">Calculer l'empreinte</button>
                     </form>
                     <div id="hash">
 
@@ -208,7 +206,7 @@
                     </div>
                         <div class="form-group row">
                             <input type="file" id="key1" name="key1" style="display:none">
-                            <label for="key1" class="btn btn-success mr-2">Entrer votre clé publique</label>
+                            <label for="key1" class="btn btn-primary mr-2">Entrer votre clé publique</label>
                             <div id="fichier1"></div>
                         </div>
                         <script th:inline="javascript">
@@ -227,9 +225,7 @@
                                     });
                                 }
                             }
-                            alogoSelecte.addEventListener('change',function () {
-                                getSize();
-                            })
+                            alogoSelecte.addEventListener('change',getSize);
                             getSize();
                             document.getElementById("key1").addEventListener('change',function () {
                                 const p = document.createElement('p');
@@ -252,7 +248,7 @@
                         </div>
                         <div id="fileInputV" class="form-group row" style="display: none;">
                             <input type="file" id="fileV" name="fileV" style="display: none;">
-                            <label for="fileV" class="btn btn-success mr-2" id="chooseFileButton">Choisir un fichier</label>
+                            <label for="fileV" class="btn btn-primary mr-2" id="chooseFileButton">Choisir un fichier</label>
                         </div>
                         <div id="show"></div>
                         <!--                        <div class="form-group row">-->
@@ -311,7 +307,7 @@
                             <label for="sign">Empreinte</label>
                             <textarea class="form-control" id="sign" rows="2"></textarea>
                         </div>
-                        <button id="verify" type="button" class="btn btn-success mr-2">Verifier</button>
+                        <button id="verify" type="button" class="btn btn-primary mr-2">Verifier</button>
                     </form>
                     <div id="verification"></div>
                     <script>

@@ -8,7 +8,6 @@ import com.farhan.staradmin.service.KeyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,12 +20,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.crypto.SecretKey;
+import javax.servlet.http.HttpSession;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.KeyPair;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -39,17 +39,16 @@ public class AlgorithmeController {
     @Autowired
     private KeyService keyService;
     @GetMapping("algorithme")
-    public ModelMap mmAlgorithm() {
+    public String mmAlgorithm(ModelMap modelMap) {
         List<Algorithme> algorithmes = algorithmeService.getAllAlgorithmes();
         List<Key> keys = keyService.getAllKeys();
-        ModelMap modelMap = new ModelMap();
         modelMap.addAttribute("algorithme", new Algorithme()); // 'user' is the attribute name
         Key key = new Key();
         System.out.println("size = "+keys.size());
         modelMap.addAttribute("key",key);
         modelMap.addAttribute("keys",keys);
         modelMap.addAttribute("algorithmes", algorithmes); // 'user' is the attribute name
-        return modelMap;
+        return "pages/algorithme";
     }
     @PostMapping("/save-algorithm")
     public String saveAlgorithm(@ModelAttribute("algorithme") Algorithme algorithme, BindingResult bindingResult, Model model) {
@@ -57,7 +56,6 @@ public class AlgorithmeController {
             // Handle validation errors if needed
             return "algorithme"; // Redirect back to the form
         }
-
         // Save the algorithm using your service
         algorithmeService.saveAlgorithme(algorithme);
 
@@ -70,12 +68,16 @@ public class AlgorithmeController {
         zipOut.closeEntry();
     }
     @PostMapping("/generate-key")
-    public ResponseEntity<Resource> generateKey(@ModelAttribute("key") Key key, BindingResult bindingResult, Model model) throws Exception {
+    public ResponseEntity<Resource> generateKey(@ModelAttribute("key") Key key, BindingResult bindingResult,
+                                                Model model,
+                                                HttpSession session) throws Exception {
         String type = algorithmeService.getTypeAlgo(key.getName()).getType();
         key.setType(type);
+        User user = (User) session.getAttribute("user");
+        key.setUser(user);
         if (type.equals("symetrique")) {
             return generateSymmetricKeyResponse(key);
-        } else if (key.getType().equals("asymetrique")) {
+        } else if (key.getType().equals("asymetrique") || key.getType().equals("signature")) {
             return generateAsymmetricKeyResponse(key);
         }
 
@@ -89,7 +91,7 @@ public class AlgorithmeController {
         if (secretKey == null) {
             return redirectToAlgorithmPage();
         } else {
-            String fileName = key.getPath() + ".key";
+            String fileName =  LocalDate.now().toString() +"_cle_secret.key";
             ByteArrayResource resource = new ByteArrayResource(secretKey.getEncoded());
             return buildFileResponse(fileName, resource);
         }
@@ -103,14 +105,14 @@ public class AlgorithmeController {
         } else {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try (ZipOutputStream zipOut = new ZipOutputStream(baos)) {
-                addToZip(zipOut, key.getPath() + ".pub", kp.getPublic().getEncoded());
-                addToZip(zipOut, key.getPath() + ".priv", kp.getPrivate().getEncoded());
+                addToZip(zipOut, "cle.pub", kp.getPublic().getEncoded());
+                addToZip(zipOut,  "cle.priv", kp.getPrivate().getEncoded());
             } catch (IOException e) {
                 e.printStackTrace();
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
 
-            String fileName = "key_pub_priv.zip";
+            String fileName = LocalDate.now().toString() +"_"+ key.getName()+"_key_pub_priv.zip";
             ByteArrayResource resource = new ByteArrayResource(baos.toByteArray());
             return buildFileResponse(fileName, resource);
         }

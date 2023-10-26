@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface KeyRepository extends JpaRepository<Key,Integer> {
     public List<Key> findByTypeAndNameAndSize(String type,String name,int size);
+    public List<Key> findByUserId(int id);
 }

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Star Admin</title>
+    <title>Cryptographie Java</title>
     <link rel="stylesheet" th:href="@{/vendors/iconfonts/mdi/css/materialdesignicons.min.css}">
     <link rel="stylesheet" th:href="@{/vendors/css/vendor.bundle.base.css}">
     <link rel="stylesheet" th:href="@{/vendors/css/vendor.bundle.addons.css}">
@@ -29,6 +29,9 @@
         .form-control {
             font-size: 16px; /* Adjust the size as needed */
         }
+        li {
+            font-size: 20px;
+        }
     </style>
 
 </head>
@@ -40,39 +43,39 @@
     <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
             <a class="navbar-brand brand-logo" href="index.html">
-                <img th:src="@{/images/logo.svg}" alt="logo" />
+                <img th:src="@{/images/logo.png}" alt="logo" />
             </a>
             <a class="navbar-brand brand-logo-mini" href="index.html">
                 <img th:src="@{/images/logo-mini.svg}" alt="logo" />
             </a>
         </div>
         <div class="navbar-menu-wrapper d-flex align-items-center">
-            <button class="navbar-toggler navbar-toggler d-none d-lg-block navbar-dark align-self-center mr-3" type="button" data-toggle="minimize">
-                <span class="navbar-toggler-icon"></span>
-            </button>
             <ul class="navbar-nav navbar-nav-right">
-                <li class="nav-item dropdown d-none d-xl-inline-block">
-                    <a class="nav-link dropdown-toggle" id="UserDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
-                        <span class="profile-text">Hello, Richard V.Welsh !</span>
-                        <img class="img-xs rounded-circle" th:src="@{/images/faces/face1.jpg}" alt="Profile image">
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
-                        <a class="dropdown-item mt-2">
-                            Manage Accounts
-                        </a>
-                        <a class="dropdown-item">
-                            Change Password
-                        </a>
-                        <a class="dropdown-item">
-                            Sign Out
-                        </a>
-                    </div>
+                <li>
+                    <form method="post" th:action="@{logout}">
+                        <button class="btn btn-primary mr-2">
+                            <span>Déconnexion</span>
+                        </button>
+                    </form>
                 </li>
             </ul>
+            <ul class="navbar-nav navbar-nav-right">
+                <li>
+                    <a>
+                        <span th:text="${session.welcome}">Bienvenue ??</span>
+                    </a>
+                </li>
+            </ul>
+            <li class="nav-item dropdown d-none d-xl-inline-block">
+                <a class="nav-link dropdown-toggle" id="UserDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
+                    <img class="img-xs rounded-circle" th:src="@{/images/img.png}" alt="Image de profil">
+                </a>
+            </li>
             <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
-                <span class="icon-menu"></span>
+                <span class="icon-menu">Déconnexion</span>
             </button>
         </div>
+
     </nav>
 
     <!-- partial -->
@@ -80,29 +83,10 @@
         <!-- partial:partials/_sidebar.html -->
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
             <ul class="nav">
-                <li class="nav-item nav-profile">
-                    <div class="nav-link">
-                        <div class="user-wrapper">
-                            <div class="profile-image">
-                                <img th:src="@{/images/faces/face1.jpg}" alt="profile image">
-                            </div>
-                            <div class="text-wrapper">
-                                <p class="profile-name">Richard V.Welsh</p>
-                                <div>
-                                    <small class="designation text-muted">Manager</small>
-                                    <span class="status-indicator online"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="btn btn-success btn-block">New Project
-                            <i class="mdi mdi-plus"></i>
-                        </button>
-                    </div>
-                </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{dashboard}">
+                    <a class="nav-link" th:href="@{documentation}">
                         <i class="menu-icon mdi mdi-television"></i>
-                        <span class="menu-title">Dashboard</span>
+                        <span class="menu-title">Documentation</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -111,26 +95,6 @@
                         <span class="menu-title">Chiffrement</span>
                     </a>
                 </li>
-<!--                <li class="nav-item">-->
-<!--                    <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">-->
-<!--                        <i class="menu-icon mdi mdi-content-copy"></i>-->
-<!--                        <span class="menu-title">Chiffrement</span>-->
-<!--                        <i class="menu-arrow"></i>-->
-<!--                    </a>-->
-<!--                    <div class="collapse" id="ui-basic">-->
-<!--                        <ul class="nav flex-column sub-menu">-->
-<!--                            <li class="nav-item">-->
-<!--                                <a class="nav-link" th:href="@{algorithme}">Configuration</a>-->
-<!--                            </li>-->
-<!--                            <li class="nav-item">-->
-<!--                                <a class="nav-link" th:href="@{symetrique}">Symetrique</a>-->
-<!--                            </li>-->
-<!--                            <li class="nav-item">-->
-<!--                                <a class="nav-link" th:href="@{asymetrique}">Asymetrique</a>-->
-<!--                            </li>-->
-<!--                        </ul>-->
-<!--                    </div>-->
-<!--                </li>-->
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{hachage}">
                         <i class="menu-icon mdi mdi-backup-restore"></i>
@@ -150,37 +114,37 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" th:href="@{fichier}">
                         <i class="menu-icon mdi mdi-sticker"></i>
                         <span class="menu-title">Gestion des fichiers</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{user-form}" aria-expanded="false" aria-controls="auth">
+                    <a class="nav-link" th:href="@{mac}" aria-expanded="false" aria-controls="auth">
                         <i class="menu-icon mdi mdi-restart"></i>
-                        <span class="menu-title">Gestion des utilisateurs</span>
+                        <span class="menu-title">Message Authentification code</span>
                         <i class="menu-arrow"></i>
                     </a>
 
-                <!--                    <div class="collapse" id="auth">-->
-<!--                        <ul class="nav flex-column sub-menu">-->
-<!--                            <li class="nav-item">-->
-<!--                                <a class="nav-link" href="#"> Blank Page </a>-->
-<!--                            </li>-->
-<!--                            <li class="nav-item">-->
-<!--                                <a class="nav-link" href="#"> Login </a>-->
-<!--                            </li>-->
-<!--                            <li class="nav-item">-->
-<!--                                <a class="nav-link" href="#"> Register </a>-->
-<!--                            </li>-->
-<!--                            <li class="nav-item">-->
-<!--                                <a class="nav-link" href="#"> 404 </a>-->
-<!--                            </li>-->
-<!--                            <li class="nav-item">-->
-<!--                                <a class="nav-link" href="#"> 500 </a>-->
-<!--                            </li>-->
-<!--                        </ul>-->
-<!--                    </div>-->
+                    <!--                    <div class="collapse" id="auth">-->
+                    <!--                        <ul class="nav flex-column sub-menu">-->
+                    <!--                            <li class="nav-item">-->
+                    <!--                                <a class="nav-link" href="#"> Blank Page </a>-->
+                    <!--                            </li>-->
+                    <!--                            <li class="nav-item">-->
+                    <!--                                <a class="nav-link" href="#"> Login </a>-->
+                    <!--                            </li>-->
+                    <!--                            <li class="nav-item">-->
+                    <!--                                <a class="nav-link" href="#"> Register </a>-->
+                    <!--                            </li>-->
+                    <!--                            <li class="nav-item">-->
+                    <!--                                <a class="nav-link" href="#"> 404 </a>-->
+                    <!--                            </li>-->
+                    <!--                            <li class="nav-item">-->
+                    <!--                                <a class="nav-link" href="#"> 500 </a>-->
+                    <!--                            </li>-->
+                    <!--                        </ul>-->
+                    <!--                    </div>-->
                 </li>
             </ul>
         </nav>
@@ -195,10 +159,9 @@
             <!-- partial:partials/_footer.html -->
             <footer class="footer">
                 <div class="container-fluid clearfix">
-            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © 2018
-              <a href="http://www.bootstrapdash.com/" target="_blank">Bootstrapdash</a>. All rights reserved.</span>
-                    <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with
-              <i class="mdi mdi-heart text-danger"></i>
+            <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © 2023
+              <a href="http://www.bootstrapdash.com/" target="_blank">Massamba SOW</a>. Tous droits réservés.</span>
+                    <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Java Cryptographie
             </span>
                 </div>
             </footer>
