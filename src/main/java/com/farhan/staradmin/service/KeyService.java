@@ -52,11 +52,11 @@ public class KeyService {
         SecretKey keyscrete = null;
         String path = directoryKeys;
         if (!key.isSave()){
-            keyscrete = SecretKeyImpl.genKey(key.getName(),key.getSize());
+            keyscrete = SecretKeyImpl.genKey(key.getName(),key.getSize(),key.getType());
             return keyscrete;
         } else {
             path += "symetrique/" + key.getPath() +".key";
-            keyscrete = SecretKeyImpl.genKey(key.getName(),key.getSize());
+            keyscrete = SecretKeyImpl.genKey(key.getName(),key.getSize(),key.getType());
             SecretKeyImpl.saveKey(keyscrete,path);
             key.setPath(path);
             keyRepository.save(key);

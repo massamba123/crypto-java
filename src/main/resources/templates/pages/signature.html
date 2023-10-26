@@ -17,7 +17,7 @@
                             <label for="algorithmV2">Sélectionner un algorithme de asymetrique</label>
                             <select id="algorithmV2" name="algorithm12" class="form-control">
                                 <option value="" selected>Choisiser un algorithme</option>
-                                <option th:each="algo : ${algos}" th:value="${algo.name}"  th:text="${algo.name}"></option>
+                                <option th:each="algo : ${algos}" th:value="${algo.name}"  th:text="${'Signature : ' + algo.name}"></option>
                             </select>
                         </div>
                         <div class="form-group row" id="divsize">
@@ -173,6 +173,7 @@
                                             // Réinitialisez le formulaire
                                             form.reset();
                                         });
+
                                         const para = document.createElement('p');
                                         para.innerHTML = data;
                                         document.getElementById('result').appendChild(para);
@@ -196,7 +197,7 @@
                             <label for="algorithmV1">Sélectionner un algorithme de asymetrique</label>
                             <select id="algorithmV1" name="algorithm11" class="form-control">
                                 <option value="" selected>Choisiser un algorithme</option>
-                                <option th:each="algo : ${algos}" th:value="${algo}"  th:text="${algo}"></option>
+                                <option th:each="algo : ${algos}" th:value="${algo.name}"  th:text="${'Signature : ' + algo.name}"></option>
                             </select>
                         </div>
                         <div class="form-group row">
@@ -374,8 +375,11 @@
                                         document.getElementById('result').appendChild(p);
                                         document.getElementById('result').appendChild(p1);
                                         document.getElementById('result').appendChild(labelElement);
+                                        const space = document.createElement('span');
+                                        space.innerText = ' ';
+                                        document.getElementById('result').appendChild(space);
                                         const buttonElement = document.createElement("button");
-                                        buttonElement.className = 'btn btn-success mr-2'
+                                        buttonElement.className = 'btn btn-primary mr-2'
                                         buttonElement.textContent = "Reinitialiser";
                                         buttonElement.addEventListener("click", function() {
                                             while (empreintes.firstChild) {

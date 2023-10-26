@@ -1,6 +1,8 @@
 package com.farhan.staradmin.controller;
 
+import com.farhan.staradmin.entity.Algorithme;
 import com.farhan.staradmin.entity.HashUtil;
+import com.farhan.staradmin.service.AlgorithmeService;
 import com.farhan.staradmin.service.HachageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +20,12 @@ public class HachageController {
 
     @Autowired
     private HachageService hachageService;
+    @Autowired
+    private AlgorithmeService algorithmeService;
     private String hash = "";
     @GetMapping(value = "hachage")
     public ModelMap mmHachage() {
-        List<String> haches = Arrays.asList("SHA-1","SHA-256","SHA-384","SHA-512","SHA-3-256","MD5","Whirlpool","GOST R 34.11-94");
+        List<Algorithme> haches = algorithmeService.getAllAlgoHachage();
         ModelMap modelMap = new ModelMap();
         modelMap.addAttribute("algos",haches);
         modelMap.addAttribute("algoOptions",getAlgoHaches());

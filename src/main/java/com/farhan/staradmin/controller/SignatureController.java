@@ -65,7 +65,6 @@ public class SignatureController {
             hash = signatureService.sign(option,priv,message.getBytes());
         }
         else if (!file.isEmpty() && message.isEmpty()){
-            System.out.println("fffffffffffffffffffffffffff");
             hash = signatureService.sign(option,priv,file.getBytes());
         }
         return ResponseEntity.ok().body(hash);

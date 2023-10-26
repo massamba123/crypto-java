@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
-@Table(name = "key_option")
+@Table(name = "cles")
 public class Key {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,9 +75,9 @@ public class Key {
         types.put("Serpent", Arrays.asList(128, 192, 256));
         types.put("RC4", Arrays.asList(40, 128, 256, 2048)); // Separate values with commas
         types.put("ChaCha20", Collections.singletonList(256));
-
         // Algorithmes de chiffrement asymétrique
         types.put("RSA", Arrays.asList(1024, 2048, 3072, 4096));
+        types.put("DSA", Arrays.asList(256, 512));
         types.put("ECDSA", Arrays.asList(256, 384,521)); // Adjust as needed
         types.put("ElGamal", Arrays.asList(1024, 2048, 3072, 4096));
 

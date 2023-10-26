@@ -51,36 +51,7 @@ public class ChiffrementController {
         // Retournez la liste de clés en réponse à la requête AJAX (elle sera automatiquement convertie en JSON)
         return keys;
     }
-    @PostMapping("/gen-key")
-    @ResponseBody // Cette annotation indique que le résultat doit être converti en JSON
-    public ResponseEntity<Resource> generateKey(@RequestBody Map<String, String> params) throws Exception {
-        String type = params.get("type");
-        String algorithme = params.get("algorithme");
-        int size = Integer.parseInt(params.get("size"));
-        SecretKey secretKey = SecretKeyImpl.genKey(algorithme,size);
-        Key key = new Key();
-        key.setType(type);
-        key.setSize(size);
-        key.setName(algorithme);
-        // Save the algorithm using your service
-        keyService.saveKey(key);
-        String contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
-        // Renvoyer le fichier en tant que réponse HTTP
-        String filaName = "secret-key-"+key.getName() + "-"+key.getSize()+"-"+ new Date().getHours() +".key";
-        ByteArrayResource resource = new ByteArrayResource(secretKey.getEncoded());
-
-        // Set the headers for the response
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+filaName);
-
-        // Build the ResponseEntity with the ByteArrayResource and headers
-        return ResponseEntity.ok()
-                .headers(headers)
-                .contentLength(secretKey.getEncoded().length)
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(resource);
-    }
-    @GetMapping("asymetrique")
+     @GetMapping("asymetrique")
     public ModelMap mmAsymetrique() {
         ModelMap modelMap = new ModelMap();
         modelMap.addAttribute("user", new User()); // 'user' is the attribute name
@@ -101,19 +72,6 @@ public class ChiffrementController {
         model.addAttribute("algorithmes", algorithmes);
         return "pages/symetrique";
     }
-//    @GetMapping("dechiffrement")
-//    public String mmDechiffrement(ModelMap model) {
-//        // If the user is authenticated, proceed with the logic.
-//        List<Algorithme> algorithmes = algorithmeService.getAllAlgorithmes();
-//        Chiffrement chiffrement = new Chiffrement();
-//        chiffrement.setType("symetrique");
-//        Chiffrement dechiffrement = new Chiffrement();
-//        dechiffrement.setType("asymetrique");
-//        dechiffrement.setMode("Dechiffrement");
-//        model.addAttribute("dechiffrement", dechiffrement);
-//        model.addAttribute("algorithmes", algorithmes);
-//        return "pages/dechiffrement";
-//    }
     @PostMapping("/encrypt")
     public ResponseEntity<Resource> generateKey(@ModelAttribute("chiffrement") Chiffrement chiffrement,
                                                 @RequestParam("file") MultipartFile file,
@@ -140,7 +98,6 @@ public class ChiffrementController {
                 sk = SecretKeyImpl.getKey(chiffrement.getKeyPath());
             }
             byte[] fileBytes = new byte[0];
-            System.out.println(chiffrement.getMessage().length());
             if (!file.isEmpty() && chiffrement.getMessage().isEmpty()){
                 String fileName = file.getOriginalFilename();
                 fileBytes = file.getBytes();
@@ -177,7 +134,6 @@ public class ChiffrementController {
                                                   Model model) throws Exception {
 
         byte[] out = new byte[0];
-        System.out.println("cle"+Utils.toHex(key.getBytes()));
         if (!key.isEmpty()) {
             // Process the uploaded file here
             java.security.Key sk = null;
@@ -186,7 +142,6 @@ public class ChiffrementController {
             String type =algorithm.getType();
             String provider = algorithm.getProvider();
             chiffrement.setType(type);
-            System.out.println("cle type"+type);
             if (type.equals("symetrique")){
                 sk = SecretKeyImpl.getKeyFromBytes(key.getBytes(), chiffrement.getAlgorithme());
             }
@@ -197,7 +152,6 @@ public class ChiffrementController {
                 sk = SecretKeyImpl.getKey(chiffrement.getKeyPath());
             }
             byte[] fileBytes = new byte[0];
-            System.out.println(file);
             if (!file.isEmpty() && chiffrement.getMessage().isEmpty()){
                 String fileName = file.getOriginalFilename();
                 fileBytes = file.getBytes();

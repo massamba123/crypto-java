@@ -53,8 +53,10 @@
                                 const algorithmOptions = {
                                     'symetrique': ["AES", "DES", "DESede", "Blowfish", "IDEA", "Camellia", "SEED", "Serpent", "RC4", "ChaCha20"],
                                     'asymetrique': ["RSA", "ElGamal"],
+                                    'hachage' : ["SHA-1","SHA-256","SHA-384","SHA-512","SHA-3-256","MD5","Whirlpool","GOST R 34.11-94"],
                                     "signature" : ["RSA","DSA","ECDSA","EdDSA"],
-                                    'Hashing': ["SHA-1", "SHA-256", "SHA-384", "SHA-512", "SHA-3-256", "MD5", "Whirlpool", "GOST R 34.11-94"]
+                                    'Hashing': ["SHA-1", "SHA-256", "SHA-384", "SHA-512", "SHA-3-256", "MD5", "Whirlpool", "GOST R 34.11-94"],
+                                    "mac" : [  "HmacMD5", "HmacSHA1", "HmacSHA224", "HmacSHA256", "HmacSHA384", "HmacSHA512"]
                                 };
                                 function updateAlgorithmOptions() {
                                     const selectedType = typeSelect.value;
@@ -93,7 +95,7 @@
         <div class="col-6 grid-margin h-100">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Cle</h4>
+                    <h4 class="card-title">Generation de Cle</h4>
                     <form th:object="${key}" th:action="@{generate-key}" method="post" class="form-sample">
                         <div>
                             <div class="form-group row">
@@ -109,10 +111,13 @@
                                     <option value="0" selected>Choisiser la taille de la cle a generer</option>
                                 </select>
                             </div>
-                            <div class="form-check form-check-flat row">
-                                <label class="form-check-label" for="saveKey">Voulez-vous sauvegarder la clé ?</label>
-                                <input type="checkbox" id="saveKey" th:field="*{save}" class="form-check-input">
-                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-8 col-form-label" for="saveKey">Voulez-vous sauvegarder la clé ?</label>
+                                <select class="form-control form-control-lg" id="saveKey" th:field="*{save}">
+                                    <option value="false" selected>Non</option>
+                                    <option value="true">Oui</option>
+                                </select>
+                             </div>
                             <div class="form-group row" id="fileNameGroup" style="display: none;">
                                 <label class="col-sm-3 col-form-label" for="fileName">Nom du fichier :</label>
                                 <input type="text" id="fileName" th:field="*{path}" class="form-control">
@@ -148,7 +153,7 @@
                                     }
                                 }
                                 function toggleFileNameInput() {
-                                    if (saveKeyCheckbox.checked) {
+                                    if (saveKeyCheckbox.value === "true") {
                                         fileNameGroup.style.display = 'block';
                                         btn.innerHTML = "Enregistrer la cle";
                                     } else {

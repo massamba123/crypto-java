@@ -8,9 +8,11 @@ import java.security.spec.KeySpec;
 import java.util.Arrays;
 
 public class SecretKeyImpl implements TestSecretKey {
-    public static SecretKey genKey(String algorithm, int taille) throws Exception {
+    public static SecretKey genKey(String algorithm, int taille,String type) throws Exception {
         KeyGenerator kg = KeyGenerator.getInstance(algorithm);
-        kg.init(taille);
+        if (type.equals("symetrique")){
+            kg.init(taille);
+        }
         return kg.generateKey();
     }
     public static void saveKey(SecretKey key,String path) throws Exception{

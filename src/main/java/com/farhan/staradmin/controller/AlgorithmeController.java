@@ -40,13 +40,10 @@ public class AlgorithmeController {
     private KeyService keyService;
     @GetMapping("algorithme")
     public String mmAlgorithm(ModelMap modelMap) {
-        List<Algorithme> algorithmes = algorithmeService.getAllAlgorithmes();
-        List<Key> keys = keyService.getAllKeys();
+        List<Algorithme> algorithmes = algorithmeService.getAllAlgoGenKey();
         modelMap.addAttribute("algorithme", new Algorithme()); // 'user' is the attribute name
         Key key = new Key();
-        System.out.println("size = "+keys.size());
         modelMap.addAttribute("key",key);
-        modelMap.addAttribute("keys",keys);
         modelMap.addAttribute("algorithmes", algorithmes); // 'user' is the attribute name
         return "pages/algorithme";
     }
@@ -75,7 +72,7 @@ public class AlgorithmeController {
         key.setType(type);
         User user = (User) session.getAttribute("user");
         key.setUser(user);
-        if (type.equals("symetrique")) {
+        if (type.equals("symetrique") || type.equals("mac")) {
             return generateSymmetricKeyResponse(key);
         } else if (key.getType().equals("asymetrique") || key.getType().equals("signature")) {
             return generateAsymmetricKeyResponse(key);

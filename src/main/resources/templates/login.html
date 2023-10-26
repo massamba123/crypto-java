@@ -33,112 +33,39 @@
 </head>
 
 <body style="background-color: #2d4278;">
-<section>
-    <div class="row flex-grow d-flex justify-content-center align-items-center" style="margin: 10px">
-        <div class="col-md-6 d-flex align-items-stretch grid-margin stretch-card">
-            <div class="col-12 stretch-card">
-                <div class="card">
-                    <div class="card-body">
+<section class="d-flex ml-md-5 my-5" style="width: 60%;">
+    <div class="col-12 stretch-card mx-lg-5-5 my-lg-5">
+        <div class="card justify-content-center align-items-center">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
                         <h4 class="card-title">Connexion</h4>
-                        <form th:action="@{connexion}" method="post" class="forms-sample">
-                            <div class="form-group row">
-                                <label for="exampleInputEmail2" class="col-sm-3 col-form-label">Username</label>
-                                <div class="col-sm-9">
-                                    <input type="text" name="username" class="form-control" id="exampleInputEmail2" placeholder="Enter username">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="exampleInputPassword2" class="col-sm-3 col-form-label">Password</label>
-                                <div class="col-sm-9">
-                                    <input type="password" name="password" class="form-control" id="exampleInputPassword2" placeholder="Password">
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary mr-2">Connexion</button>
-                            <button class="btn btn-light">Cancel</button>
+                    </div>
+                    <div class="col">
+                        <form th:action="@{inscription}">
+                            <button type="submit" class="btn btn-primary mr-2">Creer un Compte</button>
                         </form>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-6 grid-margin grid-margin stretch-card" style="padding: 50px">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title">Creation Compte</h4>
-                    <form class="forms-sample">
-                        <div class="form-group">
-                            <label for="first_name">Prenom</label>
-                            <input type="text" class="form-control" id="first_name" placeholder="Prenom">
+                <form th:action="@{connexion}" method="post" class="forms-sample">
+                    <div class="form-group row">
+                        <label for="exampleInputEmail2" class="col-sm-3 col-form-label">Email</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="username" class="form-control" id="exampleInputEmail2" placeholder="Entrer votre email">
                         </div>
-                        <div class="form-group">
-                            <label for="last_name">Nom</label>
-                            <input type="text" class="form-control" name="last_name" id="last_name" placeholder="Nom">
-                        </div>
-                        <div class="form-group">
-                            <label for="username">Username</label>
-                            <input type="email" class="form-control" name="username" id="username" placeholder="Email">
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" name="password" class="form-control" id="password" placeholder="Password">
-                        </div>
-                        <!--          <div class="form-group">-->
-                        <!--            <label>File upload</label>-->
-                        <!--            <input type="file" name="img[]" class="file-upload-default">-->
-                        <!--            <div class="input-group col-xs-12">-->
-                        <!--              <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image">-->
-                        <!--              <span class="input-group-append">-->
-                        <!--                          <button class="file-upload-browse btn btn-info" type="button">Upload</button>-->
-                        <!--                        </span>-->
-                        <!--            </div>-->
-                        <!--          </div>-->
-                        <button id="connexion" type="button" class="btn btn-primary mr-2">Submit</button>
-                        <button class="btn btn-light">Cancel</button>
-                    </form>
-                    <div>
-                        <span id="show"></span>
                     </div>
-                    <script>
-                        function reset() {
-                            document.getElementById("first_name").value = "";
-                            document.getElementById("last_name").value = "";
-                            document.getElementById("username").value = "";
-                            document.getElementById("password").value = "";
-                        }
-                        function compteCeation() {
-                            const data = {
-                                first_name: document.getElementById("first_name").value,
-                                last_name: document.getElementById("last_name").value,
-                                username: document.getElementById("username").value,
-                                password: document.getElementById("password").value,
-                            }
-                            const formData = new FormData();
-                            formData.append("first_name",data.first_name);
-                            formData.append("last_name",data.last_name);
-                            formData.append("username",data.username);
-                            formData.append("password",data.password);
-                            fetch('save-user', {
-                                method: 'POST',
-                                body: formData
-                            })
-                                .then(response => response.text())
-                                .then(data => {
-                                    console.log(data)
-                                    document.getElementById("show").style.color = 'green';
-                                    document.getElementById("show").innerHTML = data;
-                                })
-                                .catch(error => {
-                                });
-                        }
-                        document.getElementById("connexion").addEventListener('click', function (e) {
-                            e.preventDefault(); // Empêcher la soumission du formulaire
-                            compteCeation();
-                            reset();
-                        });
-                    </script>
-                </div>
+                    <div class="form-group row">
+                        <label for="exampleInputPassword2" class="col-sm-3 col-form-label">Mot de passe</label>
+                        <div class="col-sm-9">
+                            <input type="password" name="password" class="form-control" id="exampleInputPassword2" placeholder="Mot de passe">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary mr-2">Connexion</button>
+                </form>
             </div>
         </div>
     </div>
 </section>
+
 </body>
 </html>

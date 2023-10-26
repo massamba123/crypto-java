@@ -30,7 +30,6 @@ public class ChiffrementService {
             cipher.init(Cipher.DECRYPT_MODE,sk);
         }
         byte[] out = cipher.doFinal(file);
-        System.out.println(Utils.toHex(out));
         chiffrementRepository.save(chiffrement);
         return out;
     }

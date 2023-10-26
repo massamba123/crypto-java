@@ -105,7 +105,6 @@ public class KeyController {
     }
     @PostMapping("delete")
     public String delete(@RequestParam("id") int id){
-        System.out.println("id = "+id);
         keyService.deleteKey(id);
         return "redirect:/pages/fichier";
     }

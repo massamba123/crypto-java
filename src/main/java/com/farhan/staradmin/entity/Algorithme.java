@@ -14,7 +14,7 @@ public class Algorithme {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(unique = true,nullable = false)
+    @Column(nullable = false)
     private String name;
     @Column(nullable = true)
     private String provider = "BC";
@@ -37,7 +37,7 @@ public class Algorithme {
     public Algorithme() {
     }
     public List<String> getTypes(){
-        return Arrays.asList("symetrique","asymetrique","signature","partage cle");
+        return Arrays.asList("symetrique","asymetrique","hachage","signature","mac");
     }
     public  List<String> getAlgoTypes(){
         switch (this.getType()) {
@@ -47,6 +47,13 @@ public class Algorithme {
                 return List.of("RSA");
             case "signature":
                 return Arrays.asList("RSA","DSA","ECDSA","EdDSA");
+            case "mac":
+                return Arrays.asList(  "HmacMD5",
+                        "HmacSHA1",
+                        "HmacSHA224",
+                        "HmacSHA256",
+                        "HmacSHA384",
+                        "HmacSHA512");
             case "partage cle":
                 return Collections.singletonList("Diffie-Hellman");
         }

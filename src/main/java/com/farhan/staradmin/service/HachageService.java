@@ -10,7 +10,6 @@ import java.util.Arrays;
 public class HachageService {
 
     public String hash(String algo,byte[]  message) throws Exception{
-        System.out.println("algo "+ algo);
         MessageDigest md = MessageDigest.getInstance(algo);
         byte[] out = md.digest(message);
         return Utils.toHex(out);

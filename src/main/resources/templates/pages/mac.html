@@ -8,19 +8,12 @@
   <div class="grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title">Chiffrement</h4>
+        <h4 class="card-title">Ceration de Message Authentification Code (MAC)</h4>
         <form id="chiffre" class="form-sample">
           <div class="form-group row mr-3">
             <label for="algorithm">Sélectionner un algorithme:</label>
             <select id="algorithm" name="algorithm" class="form-control">
-              <option th:each="algo : ${algorithmes}" th:value="${algo}" th:text="${algo}"></option>
-            </select>
-          </div>
-          <div class="form-group row">
-            <label for="passwordOrSecretKey">Choisir entre mot de passe et clé secrète:</label>
-            <select id="passwordOrSecretKey" name="passwordOrSecretKey" class="form-control">
-              <option value="password">Mot de passe</option>
-              <option value="secretKey">Clé secrète</option>
+              <option th:each="algo : ${algorithmes}" th:value="${algo.name}" th:text="${'MAC: ' + algo.name}"></option>
             </select>
           </div>
           <div class="form-group row" id="passwordInput">
@@ -33,48 +26,38 @@
           <div class="form-group row">
             <label for="messageOrFiles">Choisir entre message et fichiers:</label>
             <select id="messageOrFiles" name="messageOrFiles" class="form-control">
+              <option selected>Choisir entre message et fichiers</option>
               <option value="message">Message</option>
               <option value="files">Fichiers</option>
             </select>
           </div>
-          <div class="form-group row" id="messageInput">
+          <div class="form-group row" id="messageInput" style="display: none">
             <label for="message">Message:</label>
             <input type="text" id="message" name="message" class="form-control">
           </div>
-          <div class="form-group row" id="fileInput">
+          <div class="form-group row" id="fileInput" style="display: none">
             <input type="file" id="import">
           </div>
-          <button type="submit"  id="generateMac" class="btn btn-primary">
-            Créer MAC
+          <button type="button"  id="generateMac" class="btn btn-primary">
+            Générer le MAC
           </button>
         </form>
       </div>
     </div>
   </div>
-  <script>
-    // Gérer l'affichage conditionnel du champ de saisie de clé secrète en fonction du choix de l'utilisateur
-    const passwordOrSecretKey = document.getElementById("passwordOrSecretKey");
-    const passwordInput = document.getElementById("passwordInput");
-    const secretKeyInput = document.getElementById("secretKeyInput");
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title">Resultat</h4>
+      <div id="result">
 
-    passwordOrSecretKey.addEventListener("change", function () {
-      if (passwordOrSecretKey.value === "password") {
-        passwordInput.style.display = "block";
-        secretKeyInput.style.display = "none";
-      } else if (passwordOrSecretKey.value === "secretKey") {
-        passwordInput.style.display = "none";
-        secretKeyInput.style.display = "block";
-      }
-    });
-  </script>
-  <div id="result">
-
+      </div>
+    </div>
   </div>
   <script>
     // Gérer l'affichage conditionnel du champ de saisie de fichier en fonction du choix de l'utilisateur
     const messageOrFiles = document.getElementById("messageOrFiles");
     const messageInput = document.getElementById("messageInput");
-    const fileInput = document.getElementById("import");
+    const fileInput = document.getElementById("fileInput");
 
     messageOrFiles.addEventListener("change", function () {
       if (messageOrFiles.value === "message") {
@@ -85,8 +68,8 @@
         fileInput.style.display = "block";
       }
     });
-    fileInput.addEventListener("change",function () {
-      const file = fileInput.files;
+    document.getElementById("import").addEventListener("change",function () {
+      const file = document.getElementById("import").files;
       if (file.length > 0){
         document.getElementById("p").innerHTML = file[0].name;
       }
@@ -97,10 +80,7 @@
     document.getElementById("generateMac").addEventListener("click", function () {
       // Récupérez les valeurs des champs de formulaire
       const algorithm = document.getElementById("algorithm").value;
-      const passwordOrSecretKey = document.getElementById("passwordOrSecretKey").value;
       const password = document.getElementById("password").value;
-      const secretKey = document.getElementById("secretKey").files[0];
-      const messageOrFiles = document.getElementById("messageOrFiles").value;
       const message = document.getElementById("message").value;
       const file = document.getElementById("import").files[0];
 
@@ -108,7 +88,6 @@
       const formData = new FormData();
       formData.append("algorithm", algorithm);
       formData.append("password", password);
-      formData.append("secretKey", secretKey);
       formData.append("message", message);
       formData.append("file", file);
 
@@ -119,9 +98,9 @@
       })
               .then(response => response.text())
               .then(data => {
-               document.getElementById("result").innerHTML = "";
-               const p = document.createElement("p");
-               p.innerHTML = "Resultat : "+ data;
+                document.getElementById("result").innerHTML = "";
+                const p = document.createElement("p");
+                p.innerHTML = data;
                 document.getElementById("result").appendChild(p);
               })
               .catch(error => {
@@ -129,6 +108,7 @@
               });
     });
   </script>
+
 </section>
 </body>
 </html>

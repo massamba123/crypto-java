@@ -15,9 +15,6 @@ public class ChiffrementUtil {
 
 
     public List<Key> getKeysByAttribut(String type,String name,int size){
-        System.out.println("chiffment "+ type);
-        System.out.println("chiffment "+ name);
-        System.out.println("chiffment "+ size);
         List<Key> keys = keyRepository.findByTypeAndNameAndSize(type,name,size);
         return keys;
     }

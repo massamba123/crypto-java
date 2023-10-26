@@ -26,8 +26,12 @@ public class LoginController {
     public String mmError() {
         return "error/404";
     }
+    @GetMapping( "/inscription")
+    public String mmacceuil() {
+        return "inscription";
+    }
     @PostMapping("save-user")
-    public String creationCompte(
+    public RedirectView creationCompte(
             @RequestParam("first_name") String first_name,
             @RequestParam("last_name") String last_name,
             @RequestParam("username") String username,
@@ -35,7 +39,7 @@ public class LoginController {
             Model model
     ) {
         userService.createUser(new User(first_name, last_name, username, password));
-        return "login"; // Remplacez "viewName" par le nom de votre vue JSP, Thymeleaf ou autre.
+        return new RedirectView("login"); // Remplacez "viewName" par le nom de votre vue JSP, Thymeleaf ou autre.
     }
 
     @PostMapping("connexion")
@@ -47,7 +51,6 @@ public class LoginController {
         RedirectView redirectView = new RedirectView();
         User user = userService.login(username, password);
         ModelAndView modelAndView = new ModelAndView();
-        System.out.println("user"+user.getFirst_name());
         if (user != null) {
             // Utilisateur connecté avec succès, redirigez vers la page de tableau de bord.
             // Stockez l'utilisateur dans la session

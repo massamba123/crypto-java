@@ -224,6 +224,46 @@
         </div>
       </div>
     </div>
+    <div class="card">
+      <div class="card-body">
+        <!-- Collapsible Header -->
+        <a data-toggle="collapse" href="#mac" aria-expanded="false">
+          <h4 class="card-title">MAC (Authentification de Message)</h4>
+        </a>
+        <div class="table-responsive collapse" id="mac">
+          <p>
+            Un MAC (Message Authentication Code) est une valeur de hachage cryptographique générée à partir d'un message et d'une clé secrète. Il est utilisé pour vérifier l'intégrité et l'authenticité du message, c'est-à-dire pour s'assurer qu'il n'a pas été modifié en transit et qu'il provient bien de la source prévue.
+          </p>
+          <ul>
+            <li>Authentification : Le MAC garantit que le message n'a pas été altéré pendant la transmission, ce qui aide à prévenir les attaques de type "man-in-the-middle".</li>
+            <li>Intégrité : Il assure que le message n'a pas été modifié par des tiers non autorisés.</li>
+            <li>Confidentialité : Le MAC ne chiffre pas le message, mais il utilise la clé secrète pour vérifier l'authenticité du message.</li>
+            <li>Clé secrète : Pour générer un MAC, une clé secrète est utilisée, ce qui rend la vérification du MAC impossible sans cette clé.</li>
+          </ul>
+
+          <p>
+            L'application de génération de MAC offre un moyen simple de créer un MAC en fonction de vos besoins. Suivez les étapes ci-dessous pour utiliser cette fonctionnalité.
+          </p>
+          <ul>
+            <li>Générer un MAC pour l'authentification de message ou de fichier.</li>
+          </ul>
+          <p>
+            Pour générer un MAC :
+          </p>
+          <ol>
+            <li>Sélectionnez l'algorithme de MAC que vous souhaitez utiliser. Par exemple, HMAC-SHA256.</li>
+            <li>Choisissez entre une clé secrète ou un mot de passe pour l'authentification. La clé secrète sera générée en fonction de l'option choisie.</li>
+            <li>Indiquez si vous souhaitez authentifier un message ou un fichier.</li>
+            <li>Saisissez le message ou importez le fichier que vous souhaitez authentifier.</li>
+            <li>Cliquez sur "Générer MAC" pour obtenir le résultat du MAC.</li>
+          </ol>
+
+          <p>
+            Remarque : Assurez-vous de conserver votre clé secrète ou mot de passe en toute sécurité, car ils sont essentiels pour la génération du MAC.
+          </p>
+        </div>
+      </div>
+    </div>
 
 
   </div>

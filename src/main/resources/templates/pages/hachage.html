@@ -17,7 +17,7 @@
                             <label for="algorithms">Sélectionner un algorithme de hachage</label>
                             <select id="algorithms" name="algorithms" class="form-control">
                                 <option value="" selected>Choisiser un algorithme</option>
-                                <option th:each="algo : ${algos}" th:value="${algo}"  th:text="${algo}"></option>
+                                <option th:each="algo : ${algos}" th:value="${algo.name}"  th:text="${'Hachage  :'+ algo.name}"></option>
                             </select>
                         </div>
                         <div class="form-group row" id="divsize" style="display: none">
@@ -191,7 +191,7 @@
                             <label for="algorithmV">Sélectionner un algorithme de hachage</label>
                             <select id="algorithmV" name="algorithm1" class="form-control">
                                 <option value="" selected>Choisiser un algorithme</option>
-                                <option th:each="algo : ${algos}" th:value="${algo}"  th:text="${algo}"></option>
+                                <option th:each="algo : ${algos}" th:value="${algo.name}"  th:text="${'Hachage  :'+ algo.name}"></option>
                             </select>
                         </div>
                         <div class="form-group row" id="divsize1" style="display: none">
@@ -367,9 +367,12 @@
                                         p1.innerText = 'Hash : '+ document.getElementById('empreinte').value;
                                         empreintes.appendChild(p);
                                         empreintes.appendChild(p1);
+                                        const space = document.createElement('span');
+                                        space.innerText = ' ';
                                         empreintes.appendChild(labelElement);
+                                        empreintes.appendChild(space);
                                         const buttonElement = document.createElement("button");
-                                        buttonElement.className = 'btn btn-success mr-2'
+                                        buttonElement.className = 'btn btn-primary mr-2'
                                         buttonElement.textContent = "Reinitialiser";
                                         buttonElement.addEventListener("click", function() {
                                             while (empreintes.firstChild) {
