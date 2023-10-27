@@ -67,7 +67,7 @@
                 </li>
             </ul>
             <li class="nav-item dropdown d-none d-xl-inline-block">
-                <a class="nav-link dropdown-toggle" id="UserDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
+                <a>
                     <img class="img-xs rounded-circle" th:src="@{/images/img.png}" alt="Image de profil">
                 </a>
             </li>
@@ -85,66 +85,51 @@
             <ul class="nav">
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{documentation}">
-                        <i class="menu-icon mdi mdi-television"></i>
+                        <i class="menu-icon mdi mdi-read"></i>
                         <span class="menu-title">Documentation</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{symetrique}">
-                        <i class="menu-icon mdi mdi-content-copy"></i>
+                        <i class="menu-icon mdi mdi-security"></i>
                         <span class="menu-title">Chiffrement</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{hachage}">
-                        <i class="menu-icon mdi mdi-backup-restore"></i>
+                        <i class="menu-icon mdi mdi-security"></i>
                         <span class="menu-title">Hachage</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{signature}">
-                        <i class="menu-icon mdi mdi-backup-restore"></i>
+                        <i class="menu-icon mdi mdi-marker"></i>
                         <span class="menu-title">Signature</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{algorithme}">
-                        <i class="menu-icon mdi mdi-table"></i>
+                        <i class="menu-icon mdi mdi-settings"></i>
                         <span class="menu-title">Configuration des clés</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{fichier}">
-                        <i class="menu-icon mdi mdi-sticker"></i>
+                        <i class="menu-icon mdi mdi-file"></i>
                         <span class="menu-title">Gestion des fichiers</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{mac}" aria-expanded="false" aria-controls="auth">
-                        <i class="menu-icon mdi mdi-restart"></i>
+                    <a class="nav-link" th:href="@{mac}">
+                        <i class="menu-icon mdi mdi-security"></i>
                         <span class="menu-title">Message Authentification code</span>
-                        <i class="menu-arrow"></i>
                     </a>
-
-                    <!--                    <div class="collapse" id="auth">-->
-                    <!--                        <ul class="nav flex-column sub-menu">-->
-                    <!--                            <li class="nav-item">-->
-                    <!--                                <a class="nav-link" href="#"> Blank Page </a>-->
-                    <!--                            </li>-->
-                    <!--                            <li class="nav-item">-->
-                    <!--                                <a class="nav-link" href="#"> Login </a>-->
-                    <!--                            </li>-->
-                    <!--                            <li class="nav-item">-->
-                    <!--                                <a class="nav-link" href="#"> Register </a>-->
-                    <!--                            </li>-->
-                    <!--                            <li class="nav-item">-->
-                    <!--                                <a class="nav-link" href="#"> 404 </a>-->
-                    <!--                            </li>-->
-                    <!--                            <li class="nav-item">-->
-                    <!--                                <a class="nav-link" href="#"> 500 </a>-->
-                    <!--                            </li>-->
-                    <!--                        </ul>-->
-                    <!--                    </div>-->
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{apropos}">
+                        <i class="menu-icon mdi mdi-contact-mail"></i>
+                        <span class="menu-title">Contact</span>
+                    </a>
                 </li>
             </ul>
         </nav>

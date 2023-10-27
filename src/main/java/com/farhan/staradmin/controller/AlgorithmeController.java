@@ -48,11 +48,16 @@ public class AlgorithmeController {
         return "pages/algorithme";
     }
     @PostMapping("/save-algorithm")
-    public String saveAlgorithm(@ModelAttribute("algorithme") Algorithme algorithme, BindingResult bindingResult, Model model) {
+    public String saveAlgorithm(@ModelAttribute("algorithme") Algorithme algorithme,
+                                BindingResult bindingResult,
+                                Model model,
+                                HttpSession session) {
         if (bindingResult.hasErrors()) {
             // Handle validation errors if needed
             return "algorithme"; // Redirect back to the form
         }
+        User user = (User) session.getAttribute("user");
+        algorithme.setUser(user);
         // Save the algorithm using your service
         algorithmeService.saveAlgorithme(algorithme);
 
@@ -68,10 +73,13 @@ public class AlgorithmeController {
     public ResponseEntity<Resource> generateKey(@ModelAttribute("key") Key key, BindingResult bindingResult,
                                                 Model model,
                                                 HttpSession session) throws Exception {
-        String type = algorithmeService.getTypeAlgo(key.getName()).getType();
+        String type = key.getName().split(" ")[0];
+        String name = key.getName().split(" ")[1];
+        key.setName(name);
         key.setType(type);
         User user = (User) session.getAttribute("user");
         key.setUser(user);
+        key.setLocalDate(LocalDate.now());
         if (type.equals("symetrique") || type.equals("mac")) {
             return generateSymmetricKeyResponse(key);
         } else if (key.getType().equals("asymetrique") || key.getType().equals("signature")) {

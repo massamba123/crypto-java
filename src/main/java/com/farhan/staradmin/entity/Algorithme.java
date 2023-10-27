@@ -21,6 +21,16 @@ public class Algorithme {
     @Column(nullable = true)
     private String padding = "BCPadding";
     private String type;
+    @ManyToOne
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public String getType() {
         return type;

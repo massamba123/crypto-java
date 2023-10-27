@@ -84,8 +84,10 @@ public class ChiffrementController {
             chiffrement.setMode("Chiffrement");
             // Process the uploaded file here
             java.security.Key sk = null;
-            Algorithme algorithm =  algorithmeService.getTypeAlgo(chiffrement.getAlgorithme());
-            String type =algorithm.getType();
+            String type = chiffrement.getAlgorithme().split(" ")[0];
+            String name = chiffrement.getAlgorithme().split(" ")[1];
+            Algorithme algorithm =  algorithmeService.getTypeAlgoName(name,type);
+            chiffrement.setAlgorithme(name);
             String provider = algorithm.getProvider();
             chiffrement.setType(type);
             if (type.equals("symetrique")){
@@ -138,8 +140,10 @@ public class ChiffrementController {
             // Process the uploaded file here
             java.security.Key sk = null;
             chiffrement.setMode("Dechiffrement");
-            Algorithme algorithm =  algorithmeService.getTypeAlgo(chiffrement.getAlgorithme());
-            String type =algorithm.getType();
+            String type = chiffrement.getAlgorithme().split(" ")[0];
+            String name = chiffrement.getAlgorithme().split(" ")[1];
+            Algorithme algorithm =  algorithmeService.getTypeAlgoName(name,type);
+            chiffrement.setAlgorithme(name);
             String provider = algorithm.getProvider();
             chiffrement.setType(type);
             if (type.equals("symetrique")){

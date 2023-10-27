@@ -34,11 +34,18 @@
         <div class="card-body">
           <h1>Documentation de l'Application de Cryptographie</h1>
           <p>Bienvenue dans la documentation de notre application de cryptographie ! Cette application vous offre un ensemble d'outils puissants pour sécuriser et gérer vos données sensibles. Vous pouvez effectuer diverses opérations, notamment le chiffrement, le déchiffrement, le hachage, la signature et la gestion de clés. Cette documentation vous guidera à travers les fonctionnalités de l'application et vous expliquera comment les utiliser de manière efficace.</p>
+          <div class="text-right">
+            <form class="btn btn-primary" th:action="@{download-doc}" method="get">
+              <button class="btn btn-primary" type="submit">Télécharger la version PDF</button>
+            </form>
+          </div>
           <h3>Fonctionnalités Principales :</h3>
           <ul>
             <li><strong>Chiffrement et Déchiffrement :</strong> Protégez vos données en chiffrant des messages ou des fichiers, puis déchiffrez-les lorsque vous en avez besoin.</li>
             <li><strong>Hachage :</strong> Créez des empreintes numériques uniques de vos données pour garantir leur intégrité.</li>
             <li><strong>Signature :</strong> Apposez des signatures numériques pour vérifier l'authenticité de vos documents.</li>
+            <li><strong>Message Authentification Code ou MAC : </strong> Créez des empreintes numériques uniques de vos données pour garantir l'intégrité et la non répudiation en utilisant une clé secrète.
+            </li>
             <li><strong>Gestion d'Algorithmes :</strong> Choisissez parmi une variété d'algorithmes pour personnaliser votre sécurité.</li>
             <li><strong>Génération de Clés :</strong> Générez des clés sécurisées pour vos opérations de chiffrement et de signature.</li>
             <li><strong>Gestion de Fichiers :</strong> Stockez et gérez vos clés en toute sécurité pour des opérations ultérieures.</li>
@@ -48,6 +55,7 @@
         </div>
       </div>
     </div>
+
     <div class="col-lg-12 grid-margin stretch-card">
       <div class="card">
         <div class="card-body">

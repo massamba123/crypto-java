@@ -9,6 +9,13 @@
 <section layout:fragment="content">
 
     <div class="row">
+        <h2><strong>Remarque : Chiffrement de Fichiers Volumineux</strong></h2>
+        <p>
+            Lorsque vous traitez des fichiers volumineux dans notre application, il est essentiel de prendre en compte la gestion efficace de ces fichiers, notamment leur chiffrement et leur déchiffrement. Les algorithmes de chiffrement RSA sont puissants, mais ils sont conçus pour chiffrer de petits blocs de données. Cela signifie que le chiffrement/déchiffrement de fichiers de grande taille en utilisant uniquement RSA peut poser des défis en termes de performances et d'intégrité des données.
+        </p>
+        <p>
+            Il est fortement recommandé d'utiliser AES pour le chiffrement des fichiers volumineux. AES (Advanced Encryption Standard) est plus adapté à la sécurisation de fichiers de grande taille et offre de meilleures performances pour ce type de tâche.
+        </p>
         <div class="col-md-6 grid-margin stretch-card">
             <div class="card">
                 <div class="card-body">
@@ -17,7 +24,7 @@
                         <div class="form-group row">
                             <label for="algorithm">Sélectionner un algorithme:</label>
                             <select id="algorithm" name="algorithm" class="form-control" th:field="*{algorithme}">
-                                <option th:each="algo : ${algorithmes}" th:value="${algo.name}" th:text="${algo.type + ' ' + algo.name}"></option>
+                                <option th:each="algo : ${algorithmes}" th:value="${algo.type + ' ' + algo.name}" th:text="${algo.type + ' ' + algo.name}"></option>
                             </select>
                         </div>
                         <div class="form-group row">
@@ -61,7 +68,7 @@
 
                                     // Mettez à jour l'élément d'étiquette avec le nom du fichier
                                     const h3 = document.createElement('h3');
-                                    h3.innerHTML = "Clé de chiffrement sélectionnée : " + selectedFileName;
+                                    h3.innerHTML = selectedFileName;
                                     keyname.innerHTML = ''; // Effacez le contenu précédent
                                     keyname.appendChild(h3);
                                 } else {
@@ -261,7 +268,7 @@
 
                                     // Mettez à jour l'élément d'étiquette avec le nom du fichier
                                     const h3 = document.createElement('h3');
-                                    h3.innerHTML = "fichier selectionne : " + selectedFileName;
+                                    h3.innerHTML = selectedFileName;
                                     filename.innerHTML = ''; // Effacez le contenu précédent
                                     filename.appendChild(h3);
                                 } else {
@@ -294,7 +301,7 @@
                         <div class="form-group row">
                             <label for="algorithm">Sélectionner un algorithme:</label>
                             <select id="algorithm1" name="algorithm1" class="form-control" th:field="*{algorithme}">
-                                <option th:each="algo : ${algorithmes}" th:value="${algo.name}" th:text="${algo.type + ' ' + algo.name}"></option>
+                                <option th:each="algo : ${algorithmes}" th:value="${algo.type + ' ' + algo.name}" th:text="${algo.type + ' ' + algo.name}"></option>
                             </select>
                         </div>
                         <div class="form-group row">

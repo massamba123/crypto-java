@@ -1,6 +1,7 @@
 package com.farhan.staradmin.service;
 
 import com.farhan.staradmin.entity.Algorithme;
+import com.farhan.staradmin.entity.Key;
 import com.farhan.staradmin.repository.AlgorithmeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,10 +70,11 @@ public class AlgorithmeService {
         return algorithmes;
     }
     public Algorithme getTypeAlgo(String algo){
-        Algorithme algorithme = algorithmeRepository.findByName(algo);
-        return algorithme;
+        return algorithmeRepository.findByName(algo);
     }
-
+    public Algorithme getTypeAlgoName(String algo,String type){
+        return algorithmeRepository.findByNameAndType(algo,type);
+    }
     public Algorithme getAlgorithmeById(int id) {
         return algorithmeRepository.findById(id).orElse(null);
     }
@@ -83,5 +85,8 @@ public class AlgorithmeService {
 
     public void deleteAlgorithme(int id) {
         algorithmeRepository.deleteById(id);
+    }
+    public List<Algorithme> getAlgosByUser(int id){
+        return algorithmeRepository.findByUserId(id);
     }
 }

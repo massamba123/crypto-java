@@ -22,6 +22,8 @@ public class User {
     private String selectedOption;
     @OneToMany(mappedBy = "user")
     private List<Key> keys;
+    @OneToMany(mappedBy = "user")
+    private List<Algorithme> algorithmes;
 
 
     public User(String first_name, String last_name, String username, String password, String roles) {
@@ -40,6 +42,14 @@ public class User {
     }
     public User() {
 
+    }
+
+    public List<Algorithme> getAlgorithmes() {
+        return algorithmes;
+    }
+
+    public void setAlgorithmes(List<Algorithme> algorithmes) {
+        this.algorithmes = algorithmes;
     }
 
     public List<Key> getKeys() {

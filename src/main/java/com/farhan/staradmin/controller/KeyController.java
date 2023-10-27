@@ -41,7 +41,7 @@ public class KeyController {
     @GetMapping("fichier")
     public String mmAlgorithm(ModelMap modelMap, HttpSession session) {
         User user = (User) session.getAttribute("user");
-        List<Algorithme> algorithmes = algorithmeService.getAllAlgorithmes();
+        List<Algorithme> algorithmes = algorithmeService.getAlgosByUser(user.getId());
         List<Key> keys = keyService.getKeyByUser(user.getId());
         modelMap.addAttribute("algorithme", new Algorithme()); // 'user' is the attribute name
         Key key = new Key();

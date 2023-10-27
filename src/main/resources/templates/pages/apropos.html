@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>Documentation de l'Application de Cryptographie</title>    <style>
+    /* Increase the font size for specific elements */
+    .card-title {
+        font-size: 24px; /* Adjust the size as needed */
+    }
+
+    .card-description {
+        font-size: 18px; /* Adjust the size as needed */
+    }
+    p,li {
+        font-size: 15px;
+        font-family: Arial, sans-serif; /* Spécifiez la police souhaitée ici */
+    }
+    /* Increase the font size for form labels */
+    .col-form-label {
+        font-size: 16px; /* Adjust the size as needed */
+    }
+
+    /* Increase the font size for form controls */
+    .form-control {
+        font-size: 16px; /* Adjust the size as needed */
+    }
+</style>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="row">
+        <div class="col-lg-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body" style="margin: 0 auto; text-align: center;">
+                    <h1>A propos de Moi</h1>
+                    <img class="img-thumbnail rounded-circle" th:src="@{/images/img.png}" alt="Image de profil">
+                </div>
+                <p>
+                    Je m'appelle Massamba Sow, étudiant en Master TDSI (Transmission de données et Sécurité de l'Information) au sein du département de Mathématiques Informatiques à la Faculté des Sciences et Techniques de l'Université Cheikh Anta Diop de Dakar.
+                </p>
+                <p>
+                    Je suis passionné de cryptographie, avec des connaissances solides dans ce domaine fascinant. Actuellement, je me consacre à un sujet de mémoire captivant lié à la cryptographie post-quantique. Plus précisément, mon mémoire porte sur les cryptosystèmes de McEliece basés sur les codes affines invariants.
+                </p>
+                <p>
+                    La cryptographie post-quantique est un domaine de recherche de plus en plus essentiel à mesure que les ordinateurs quantiques évoluent, ce qui remet en question la sécurité des systèmes de cryptographie actuels. Les cryptosystèmes de McEliece sont connus pour leur robustesse contre les attaques quantiques, ce qui les rend particulièrement intéressants dans le contexte de la cryptographie post-quantique. Mon travail de recherche se concentre sur les codes affines invariants, une classe de codes correcteurs d'erreurs, pour renforcer davantage la sécurité des cryptosystèmes de McEliece.
+                </p>
+                <p>
+                    Je suis également développeur FullStack chez Humanics, où je travaille sur des projets informatiques passionnants et stimulants. Mon objectif est de contribuer au développement de solutions informatiques innovantes et utiles.
+                </p>
+                <p>
+                   Cette application de cryptographie  vise à offrir aux utilisateurs une plateforme sécurisée pour gérer leurs données sensibles. Cette application permet de garantir la confidentialité, l'intégrité, l'authenticité et bien plus encore pour leurs données, en utilisant la puissance de la cryptographie.
+                </p>
+                <h2>Me Contacter</h2>
+                <p>Si vous souhaitez en savoir plus sur mes projets, discuter de collaborations potentielles ou simplement échanger sur des sujets liés à la sécurité de l'information et au développement informatique, n'hésitez pas à me contacter. Voici mes coordonnées :</p>
+
+                <ul>
+                    <li>E-mail: <a href="mailto:massambasow4@gmail.com">massambasow4@gmail.com</a></li>
+                    <li>Téléphone: +221 78 445 74 45</li>
+                    <li>LinkedIn: <a href="https://www.linkedin.com/in/massamba-sow-518b5312a/">Massamba Sow sur LinkedIn</a></li>
+                    <li>GitHub: <a href="https://github.com/massamba123/">Profil GitHub</a></li>
+                </ul>
+
+                <p>N'hésitez pas à me contacter via l'une de ces plateformes, je serais ravi d'entrer en contact avec vous.</p>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

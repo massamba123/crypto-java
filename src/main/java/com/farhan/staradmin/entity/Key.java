@@ -77,7 +77,7 @@ public class Key {
         types.put("ChaCha20", Collections.singletonList(256));
         // Algorithmes de chiffrement asymétrique
         types.put("RSA", Arrays.asList(1024, 2048, 3072, 4096));
-        types.put("DSA", Arrays.asList(256, 512));
+        types.put("DSA", Arrays.asList(512,1024,2048 ,3072 ));
         types.put("ECDSA", Arrays.asList(256, 384,521)); // Adjust as needed
         types.put("ElGamal", Arrays.asList(1024, 2048, 3072, 4096));
 
